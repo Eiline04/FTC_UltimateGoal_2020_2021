@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.RingDetector;
 
 import org.firstinspires.ftc.teamcode.Auto.Auto1_RED;
 import org.firstinspires.ftc.teamcode.Auto.Auto2_RED;
+import org.firstinspires.ftc.teamcode.Auto.Auto3_RED;
+import org.firstinspires.ftc.teamcode.Auto.Auto4_RED;
 import org.firstinspires.ftc.teamcode.Auto.AutoRemote;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -62,6 +64,8 @@ public class CameraThread implements Runnable {
                     AutoRemote.ringPosition = RingDeterminationPipeline.position;
                     Auto1_RED.ringPosition = RingDeterminationPipeline.position;
                     Auto2_RED.ringPosition = RingDeterminationPipeline.position;
+                    Auto3_RED.ringPosition = RingDeterminationPipeline.position;
+                    Auto4_RED.ringPosition = RingDeterminationPipeline.position;
                 }
 
                 if (state == CAMERA_STATE.KILL) {

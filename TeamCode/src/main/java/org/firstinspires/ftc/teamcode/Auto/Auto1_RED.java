@@ -96,7 +96,7 @@ public class Auto1_RED extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -14.0 , Math.toRadians(180.0))).build();
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(180.0))).build();
 
         launcher.setVelocity(625, AngleUnit.DEGREES); //540
         drivetrain.followTrajectory(toShooting);
@@ -110,7 +110,7 @@ public class Auto1_RED extends LinearOpMode {
 
         sleep(300);
         launcher.closeStopper();
-        launcher.setPower(0);
+        launcher.stop();
 
         //-----------------ZERO---------------
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.NONE) {
@@ -122,7 +122,7 @@ public class Auto1_RED extends LinearOpMode {
             sleep(300);
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_A);
-            sleep(1000);
+            sleep(500);
         }
 
         //------------------ONE----------------
@@ -135,7 +135,7 @@ public class Auto1_RED extends LinearOpMode {
             sleep(300);
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_B);
-            sleep(1000);
+            sleep(500);
         }
         //-----------------FOUR-----------------
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
@@ -147,13 +147,13 @@ public class Auto1_RED extends LinearOpMode {
             sleep(300);
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_C);
-            sleep(1000);
+            sleep(500);
         }
 
+        wobbleWrapper.attachGrip();
         drivetrain.updatePoseEstimate();
         PoseStorage.currentPose = drivetrain.getPoseEstimate(); //store pose
-        wobbleWrapper.attachGrip();
-        sleep(100);
+        sleep(300);
     }
 
     void buildPathsZero() {
@@ -177,10 +177,10 @@ public class Auto1_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(40.0, -26.0, Math.toRadians(180.0))).build();
 
         park_B = drivetrain.trajectoryBuilder(toZoneB.end(), true)
-                .strafeTo(new Vector2d(10.0,10.0)).build();
+                .strafeTo(new Vector2d(10.0, 10.0)).build();
     }
 
-    Trajectory  toZoneB, park_B;
+    Trajectory toZoneB, park_B;
 
     void buildPathsFour() {
         toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
