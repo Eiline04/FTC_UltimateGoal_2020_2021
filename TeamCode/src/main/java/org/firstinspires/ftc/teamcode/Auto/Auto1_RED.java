@@ -123,6 +123,8 @@ public class Auto1_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_A);
             sleep(500);
+
+            dasPositions.startDAS();
         }
 
         //------------------ONE----------------
@@ -136,6 +138,8 @@ public class Auto1_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_B);
             sleep(500);
+
+            dasPositions.startDAS();
         }
         //-----------------FOUR-----------------
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
@@ -148,6 +152,8 @@ public class Auto1_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_C);
             sleep(500);
+
+            dasPositions.startDAS();
         }
 
         wobbleWrapper.attachGrip();

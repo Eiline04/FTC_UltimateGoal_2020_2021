@@ -122,6 +122,8 @@ public class Auto2_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_A);
             sleep(500);
+
+            dasPositions.startDAS();
         }
 
         //------------------ONE----------------
@@ -137,6 +139,8 @@ public class Auto2_RED extends LinearOpMode {
             sleep(500);
             drivetrain.followTrajectory(park_B);
             sleep(500);
+
+            dasPositions.startDAS();
         }
         //-----------------FOUR-----------------
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
@@ -149,6 +153,8 @@ public class Auto2_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_C);
             sleep(500);
+
+            dasPositions.startDAS();
         }
 
         drivetrain.updatePoseEstimate();

@@ -72,11 +72,11 @@ public class Auto3_RED extends LinearOpMode {
         wobbleWrapper.closeArm();
         wobbleWrapper.attachGrip();
 
-        robot.enableBulkDataPolling();
+        //robot.enableBulkDataPolling();
 
         dasPositions = new DasPositions(robot.servoDAS);
         //dasPositions.startDAS();
-        dasPositions.setPositionDAS(0.705);
+        dasPositions.setPositionDAS(0.705 -0.01); //0.705
 
         telemetry.addLine("Ready!");
         telemetry.update();
@@ -123,6 +123,8 @@ public class Auto3_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_A);
             sleep(500);
+
+            dasPositions.startDAS();
         }
 
         //------------------ONE----------------
@@ -142,6 +144,7 @@ public class Auto3_RED extends LinearOpMode {
             launcher.openStopper();
             sleep(500);
 
+
             drivetrain.followTrajectory(toShooting2B);
             intake.stopIntake();
             sleep(200);
@@ -158,6 +161,8 @@ public class Auto3_RED extends LinearOpMode {
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
             buildPathsFour();
 
+
+            dasPositions.startDAS();
         }
 
         wobbleWrapper.attachGrip();
@@ -184,13 +189,13 @@ public class Auto3_RED extends LinearOpMode {
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(40.0, -26.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(40.0, -26.0 + 5, Math.toRadians(180.0))).build();
 
         collectB = drivetrain.trajectoryBuilder(toZoneB.end(), false)
-                .splineTo(new Vector2d(-30.0, -35.0), Math.toRadians(180.0)).build();
+                .splineTo(new Vector2d(-30.0, -35.0 - 5), Math.toRadians(180.0)).build();
 
         toShooting2B = drivetrain.trajectoryBuilder(collectB.end(), true)
-                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(175.0))).build();
+                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(184.0))).build();
 
         parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
                 .lineToLinearHeading(new Pose2d(15.0, 10.0, Math.toRadians(180.0))).build();
