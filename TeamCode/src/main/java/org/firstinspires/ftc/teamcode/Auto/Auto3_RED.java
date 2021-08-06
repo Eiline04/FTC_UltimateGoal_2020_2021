@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -76,7 +77,7 @@ public class Auto3_RED extends LinearOpMode {
 
         dasPositions = new DasPositions(robot.servoDAS);
         //dasPositions.startDAS();
-        dasPositions.setPositionDAS(0.705 -0.01); //0.705
+        dasPositions.setPositionDAS(0.705 - 0.01); //0.705
 
         telemetry.addLine("Ready!");
         telemetry.update();
@@ -142,7 +143,7 @@ public class Auto3_RED extends LinearOpMode {
 
             launcher.setVelocity(620, AngleUnit.DEGREES);
             launcher.openStopper();
-            sleep(500);
+            sleep(200);
 
 
             drivetrain.followTrajectory(toShooting2B);
@@ -161,6 +162,33 @@ public class Auto3_RED extends LinearOpMode {
         if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
             buildPathsFour();
 
+            drivetrain.followTrajectory(toZoneC);
+            sleep(100);
+            wobbleWrapper.detachGrip();
+            sleep(300);
+            wobbleWrapper.closeArm();
+
+            drivetrain.followTrajectory(collectC);
+            intake.startIntake();
+            sleep(100);
+
+            drivetrain.followTrajectory(forwardC);
+            launcher.setVelocity(620, AngleUnit.DEGREES);
+            launcher.openStopper();
+            sleep(100);
+
+
+            drivetrain.followTrajectory(toShooting2C);
+            intake.stopIntake();
+            sleep(200);
+
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(300);
+            launcher.stop();
+
+            drivetrain.followTrajectory(parkC);
 
             dasPositions.startDAS();
         }
@@ -205,8 +233,25 @@ public class Auto3_RED extends LinearOpMode {
 
 
     void buildPathsFour() {
+        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
+                .addTemporalMarker(0.50, 0.0, () -> {
+                    wobbleWrapper.openArm();
+                })
+                .lineToLinearHeading(new Pose2d(60.0, -45.0, Math.toRadians(180.0))).build();
+        collectC = drivetrain.trajectoryBuilder(toZoneB.end(), false)
+                .splineTo(new Vector2d(-10.0, -35.0 - 5), Math.toRadians(180.0)).build();
 
+        forwardC = drivetrain.trajectoryBuilder(collectC.end(), false)
+                .forward(30.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
+
+        toShooting2C = drivetrain.trajectoryBuilder(forwardC.end(),true)
+                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(184.0))).build();
+
+        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
+                .lineToLinearHeading(new Pose2d(15.0, 10.0, Math.toRadians(180.0))).build();
     }
+
+    Trajectory toZoneC, collectC, forwardC, toShooting2C, parkC;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)
