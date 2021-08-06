@@ -145,10 +145,12 @@ public class Auto3_RED extends LinearOpMode {
             launcher.openStopper();
             sleep(200);
 
+            launcher.setVelocity(630, AngleUnit.DEGREES);
+            sleep(100);
 
             drivetrain.followTrajectory(toShooting2B);
             intake.stopIntake();
-            sleep(200);
+            sleep(300);
 
             launcher.launchOneRing();
             sleep(launchSleepTime);
@@ -172,8 +174,9 @@ public class Auto3_RED extends LinearOpMode {
             intake.startIntake();
             sleep(100);
 
-            drivetrain.followTrajectory(forwardC);
-            launcher.setVelocity(620, AngleUnit.DEGREES);
+            //drivetrain.followTrajectory(forwardC);
+
+            launcher.setVelocity(622, AngleUnit.DEGREES);
             launcher.openStopper();
             sleep(100);
 
@@ -220,10 +223,10 @@ public class Auto3_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(40.0, -26.0 + 5, Math.toRadians(180.0))).build();
 
         collectB = drivetrain.trajectoryBuilder(toZoneB.end(), false)
-                .splineTo(new Vector2d(-30.0, -35.0 - 5), Math.toRadians(180.0)).build();
+                .splineTo(new Vector2d(-30.0, -35.0 - 6), Math.toRadians(181.0)).build();
 
         toShooting2B = drivetrain.trajectoryBuilder(collectB.end(), true)
-                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(184.0))).build();
+                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(195.0))).build();
 
         parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
                 .lineToLinearHeading(new Pose2d(15.0, 10.0, Math.toRadians(180.0))).build();
@@ -238,14 +241,14 @@ public class Auto3_RED extends LinearOpMode {
                     wobbleWrapper.openArm();
                 })
                 .lineToLinearHeading(new Pose2d(60.0, -45.0, Math.toRadians(180.0))).build();
-        collectC = drivetrain.trajectoryBuilder(toZoneB.end(), false)
+        collectC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
                 .splineTo(new Vector2d(-10.0, -35.0 - 5), Math.toRadians(180.0)).build();
 
         forwardC = drivetrain.trajectoryBuilder(collectC.end(), false)
                 .forward(30.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
 
         toShooting2C = drivetrain.trajectoryBuilder(forwardC.end(),true)
-                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(184.0))).build();
+                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(194.0))).build();
 
         parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
                 .lineToLinearHeading(new Pose2d(15.0, 10.0, Math.toRadians(180.0))).build();

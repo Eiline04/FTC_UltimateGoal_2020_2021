@@ -116,7 +116,7 @@ public class CameraThread implements Runnable {
         static final int REGION_HEIGHT = 40;
 
         final int FOUR_RING_THRESHOLD = 145; //140
-        final int ONE_RING_THRESHOLD = 135; //120
+        final int ONE_RING_THRESHOLD = 125 + 5; //120 //135 //last was 125
 
         Point regionPointA = new Point(
                 regionTopLeftCorner.x,
