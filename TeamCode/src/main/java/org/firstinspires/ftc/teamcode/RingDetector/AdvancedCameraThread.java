@@ -69,6 +69,7 @@ public class AdvancedCameraThread implements Runnable {
                 }
 
                 if (state == CAMERA_STATE.KILL) {
+                    camera.closeCameraDevice();
                     killThread();
                 }
                 active = false;
@@ -83,6 +84,15 @@ public class AdvancedCameraThread implements Runnable {
     public void setState(CAMERA_STATE state) {
         this.state = state;
         this.active = true;
+    }
+
+    public static CameraThread.RingDeterminationPipeline.RingPosition getResult(double rectHeight) {
+        if(rectHeight < ONE_HEIGHT)
+            return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
+
+        if(rectHeight > ONE_HEIGHT && rectHeight < FOUR_HEIGHT)
+            return CameraThread.RingDeterminationPipeline.RingPosition.ONE;
+        return CameraThread.RingDeterminationPipeline.RingPosition.FOUR;
     }
 
     public boolean isKilled() {
@@ -135,6 +145,7 @@ public class AdvancedCameraThread implements Runnable {
         Mat Cb = new Mat();
         Mat CbInv = new Mat();
         Mat thresholdMat = new Mat();
+        Mat newmat = new Mat();
         MatOfPoint m;
         Rect ring = new Rect();
         private List<MatOfPoint> contoursList = new ArrayList<>();
@@ -161,7 +172,7 @@ public class AdvancedCameraThread implements Runnable {
             Core.bitwise_not(Cb, CbInv);
 
             Imgproc.threshold(CbInv, thresholdMat, THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
-            Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+            Imgproc.findContours(thresholdMat, contoursList, newmat, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             //find the biggest orange spot
             ring.set(null);
@@ -174,7 +185,6 @@ public class AdvancedCameraThread implements Runnable {
                         maxArea = currentArea;
                         ring = Imgproc.boundingRect(m);
                     }
-                    m.release();
                 }
             }
             rectHeight = ring.height;
@@ -182,6 +192,8 @@ public class AdvancedCameraThread implements Runnable {
 
             contoursList.clear();
             splitMat.clear();
+            newmat.release();
+            m.release();
 
             switch (stageToRenderToViewport) {
                 case THRESHOLD: {

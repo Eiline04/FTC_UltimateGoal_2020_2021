@@ -23,11 +23,13 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+
 import java.util.Arrays;
 
 @Autonomous
 public class Auto4_RED extends LinearOpMode {
-    public static volatile CameraThread.RingDeterminationPipeline.RingPosition ringPosition;
+    public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;
     CameraThread cameraThread;
 
@@ -112,7 +114,7 @@ public class Auto4_RED extends LinearOpMode {
         launcher.stop();
 
         //-----------------ZERO---------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.NONE) {
+        if (ringPosition == RingPosition.NONE) {
             buildPathsZero();
 
             drivetrain.followTrajectory(toZoneA);
@@ -125,7 +127,7 @@ public class Auto4_RED extends LinearOpMode {
         }
 
         //-----------------ONE---------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.ONE) {
+        if (ringPosition == RingPosition.ONE) {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB);

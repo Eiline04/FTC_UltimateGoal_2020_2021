@@ -13,7 +13,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
+import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
@@ -23,13 +23,15 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+
 import java.util.Arrays;
 
 @Autonomous
 public class Auto2_RED extends LinearOpMode {
-    public static volatile CameraThread.RingDeterminationPipeline.RingPosition ringPosition;
+    public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;
-    CameraThread cameraThread;
+    AdvancedCameraThread cameraThread;
 
     LauncherWrapper launcher;
     WobbleWrapper wobbleWrapper;
@@ -59,14 +61,13 @@ public class Auto2_RED extends LinearOpMode {
 
         initWebcam();
         sleep(1000);
-        cameraThread = new CameraThread(webcam);
+        cameraThread = new AdvancedCameraThread(webcam);
         Thread cameraRunner = new Thread(cameraThread);
         cameraRunner.start();
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.INIT);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.INIT);
         sleep(2500);
-        cameraThread.setState(CameraThread.CAMERA_STATE.STREAM);
-        sleep(1000);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.STREAM);
 
         launcher.setServoPosition(0.7f);
         wobbleWrapper.closeArm();
@@ -81,22 +82,22 @@ public class Auto2_RED extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        launcher.openStopper();
-
         if (isStopRequested()) return;
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.DETECT);
-        sleep(50);
-        cameraThread.setState(CameraThread.CAMERA_STATE.KILL);
+        double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
+
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.KILL);
 
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(185.0))).build();
 
+        launcher.openStopper();
         launcher.setVelocity(622, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
@@ -112,7 +113,7 @@ public class Auto2_RED extends LinearOpMode {
         launcher.stop();
 
         //-----------------ZERO---------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.NONE) {
+        if (ringPosition == RingPosition.NONE) {
             buildPathsZero();
 
             drivetrain.followTrajectory(toZoneA);
@@ -127,7 +128,7 @@ public class Auto2_RED extends LinearOpMode {
         }
 
         //------------------ONE----------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.ONE) {
+        if (ringPosition == RingPosition.ONE) {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB);
@@ -143,7 +144,7 @@ public class Auto2_RED extends LinearOpMode {
             dasPositions.startDAS();
         }
         //-----------------FOUR-----------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
+        if (ringPosition == RingPosition.FOUR) {
             buildPathsFour();
 
             drivetrain.followTrajectory(toZoneC);

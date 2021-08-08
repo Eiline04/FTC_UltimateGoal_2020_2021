@@ -69,6 +69,7 @@ public class CameraThread implements Runnable {
                 }
 
                 if (state == CAMERA_STATE.KILL) {
+                    camera.closeCameraDevice();
                     killThread();
                 }
                 active = false;
