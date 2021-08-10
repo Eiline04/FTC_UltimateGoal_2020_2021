@@ -71,46 +71,47 @@ public class LauncherPIDFTuner extends LinearOpMode {
                 launcherWrapper.setVelocity(0, AngleUnit.DEGREES);
             }
 
-            if(controller.YOnce()) {
+            if (controller.YOnce()) {
                 launchOneRing();
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
                 sleep(sleepTime);
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
                 launchOneRing();
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
                 sleep(sleepTime);
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
                 launchOneRing();
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
                 sleep(sleepTime);
                 telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity",targetVelocity);
+                telemetry.addData("Target Velocity", targetVelocity);
                 telemetry.update();
             }
 
-            if(controller.BOnce()) {
+            if (controller.BOnce()) {
                 launchOneRing();
             }
 
-            if(controller.dpadUpOnce()) intake.startIntake();
-            if(controller.dpadDownOnce()) intake.stopIntake();
+            if (controller.dpadUpOnce()) intake.startIntake();
+            if (controller.dpadDownOnce()) intake.stopIntake();
 
             telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-            telemetry.addData("Target Velocity",targetVelocity);
+            telemetry.addData("Target Velocity", targetVelocity);
             telemetry.update();
 
         }
     }
+
     void launchOneRing() {
         launcherWrapper.setServoPosition(0.5f);
         sleep(150);

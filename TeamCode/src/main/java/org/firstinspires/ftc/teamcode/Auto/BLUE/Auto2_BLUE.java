@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auto;
+package org.firstinspires.ftc.teamcode.Auto.BLUE;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
+import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
 import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
@@ -27,11 +29,11 @@ import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeter
 
 import java.util.Arrays;
 
-@Autonomous(group = "RED")
-public class Auto4_RED extends LinearOpMode {
-    public static volatile RingPosition ringPosition;
+@Autonomous(group = "BLUE")
+public class Auto2_BLUE extends LinearOpMode {
+    public RingPosition ringPosition;
     OpenCvCamera webcam;
-    CameraThread cameraThread;
+    AdvancedCameraThread cameraThread;
 
     LauncherWrapper launcher;
     WobbleWrapper wobbleWrapper;
@@ -41,7 +43,7 @@ public class Auto4_RED extends LinearOpMode {
     DasPositions dasPositions;
 
     MecanumDrive drivetrain;
-    Pose2d startPose = new Pose2d(-62.8, -49.0, Math.toRadians(180.0));
+    Pose2d startPose = new Pose2d(-62.8, 49.0, Math.toRadians(180.0));
 
     private final int launchSleepTime = 300;
     Trajectory toShooting;
@@ -61,14 +63,13 @@ public class Auto4_RED extends LinearOpMode {
 
         initWebcam();
         sleep(1000);
-        cameraThread = new CameraThread(webcam);
+        cameraThread = new AdvancedCameraThread(webcam);
         Thread cameraRunner = new Thread(cameraThread);
         cameraRunner.start();
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.INIT);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.INIT);
         sleep(2500);
-        cameraThread.setState(CameraThread.CAMERA_STATE.STREAM);
-        sleep(1000);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.STREAM);
 
         launcher.setServoPosition(0.7f);
         wobbleWrapper.closeArm();
@@ -83,23 +84,23 @@ public class Auto4_RED extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        launcher.openStopper();
-
         if (isStopRequested()) return;
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.DETECT);
-        sleep(50);
-        cameraThread.setState(CameraThread.CAMERA_STATE.KILL);
+        double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
 
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.KILL);
+
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(185.0))).build();
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(180.0))).build();
 
-        launcher.setVelocity(622, AngleUnit.DEGREES);
+        launcher.openStopper();
+        launcher.setVelocity(625, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -113,12 +114,16 @@ public class Auto4_RED extends LinearOpMode {
         launcher.closeStopper();
         launcher.stop();
 
-        //-----------------ZERO---------------
         if (ringPosition == RingPosition.NONE) {
             buildPathsZero();
 
             drivetrain.followTrajectory(toZoneA);
-            sleep(100);
+
+            //rotate to 0 degrees
+            rotateTo(Math.toRadians(0), 0.6);
+
+
+            sleep(700);
             wobbleWrapper.detachGrip();
             sleep(300);
             wobbleWrapper.closeArm();
@@ -126,40 +131,37 @@ public class Auto4_RED extends LinearOpMode {
             sleep(500);
         }
 
-        //-----------------ONE---------------
         if (ringPosition == RingPosition.ONE) {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB);
-            sleep(100);
+
+            //rotate to 0 degrees
+            rotateTo(Math.toRadians(0), 0.6);
+
+            sleep(700);
             wobbleWrapper.detachGrip();
             sleep(300);
             wobbleWrapper.closeArm();
-
-            intake.startIntake();
-            drivetrain.followTrajectory(collectB);
-
-            launcher.setVelocity(620, AngleUnit.DEGREES);
-            launcher.openStopper();
             sleep(500);
-
-            drivetrain.followTrajectory(toShooting2B);
-            intake.stopIntake();
-            sleep(200);
-
-            launcher.launchOneRing();
-            sleep(launchSleepTime);
-            launcher.launchOneRing();
-            sleep(300);
-            launcher.stop();
-
-            drivetrain.followTrajectory(parkB);
+            drivetrain.followTrajectory(park_B);
+            sleep(500);
         }
 
-        //-----------------FOUR---------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
+        if (ringPosition == RingPosition.FOUR) {
             buildPathsFour();
 
+            drivetrain.followTrajectory(toZoneC);
+
+            //rotate to 0 degrees
+            rotateTo(Math.toRadians(0), 0.6);
+
+            sleep(700);
+            wobbleWrapper.detachGrip();
+            sleep(300);
+            wobbleWrapper.closeArm();
+            drivetrain.followTrajectory(park_C);
+            sleep(500);
         }
 
         drivetrain.updatePoseEstimate();
@@ -168,40 +170,51 @@ public class Auto4_RED extends LinearOpMode {
         sleep(300);
     }
 
+    private void rotateTo(double rad, double maxPower) {
+
+    }
+
     void buildPathsZero() {
         toZoneA = drivetrain.trajectoryBuilder(toShooting.end(), false)
-                .addTemporalMarker(0.50, 0.0, () -> {
+                .addTemporalMarker(0.70, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(12.0, -48.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(12.0, 48.0, Math.toRadians(180.0))).build();
 
-        park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToSplineHeading(new Pose2d(50.0, -20.0, Math.toRadians(270.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 14.0, 0.0), Math.toRadians(180.0)).build();
+        park_A = drivetrain.trajectoryBuilder(toZoneA.end().minus(new Pose2d(0,0, Math.toRadians(180.0))), false) //minus 180deg
+                .splineToSplineHeading(new Pose2d(50.0, 20.0, Math.toRadians(270.0)), Math.toRadians(270.0))
+                .splineToSplineHeading(new Pose2d(10.0, -14.0, Math.toRadians(180.0)), Math.toRadians(180.0))
+                .build();
     }
+
     Trajectory toZoneA, park_A;
 
     void buildPathsOne() {
-        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(),true)
+        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), false)
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(28.0, -27.0, Math.toRadians(200.0))).build();
+                .lineToLinearHeading(new Pose2d(20.0, 35.0, Math.toRadians(180.0))).build();
 
-        collectB = drivetrain.trajectoryBuilder(toZoneB.end(), false)
-                .splineTo(new Vector2d(-30.0, -35.0), Math.toRadians(180.0)).build();
-
-        toShooting2B = drivetrain.trajectoryBuilder(collectB.end(),true)
-                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(175.0))).build();
-
-        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
-                .lineToLinearHeading(new Pose2d(15.0,10.0, Math.toRadians(180.0))).build();
+        park_B = drivetrain.trajectoryBuilder(toZoneB.end().minus(new Pose2d(0, 0, Math.toRadians(180.0))), false) //minus 180deg after rotation
+                .back(25.0).build();
     }
-    Trajectory toZoneB, collectB, toShooting2B, parkB;
+
+    Trajectory toZoneB, park_B;
 
     void buildPathsFour() {
+        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
+                .addTemporalMarker(0.50, 0.0, () -> {
+                    wobbleWrapper.openArm();
+                })
+                .splineToSplineHeading(new Pose2d(60.0, 45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
+        park_C = drivetrain.trajectoryBuilder(toZoneC.end().minus(new Pose2d(0, 0, Math.toRadians(180.0))), false) //minus 180deg after rotation
+                .lineToConstantHeading(new Vector2d(55.0, 0.0))
+                .splineToConstantHeading(new Vector2d(10.0, 10.0), Math.toRadians(180.0)).build();
     }
+
+    Trajectory toZoneC, park_C;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)

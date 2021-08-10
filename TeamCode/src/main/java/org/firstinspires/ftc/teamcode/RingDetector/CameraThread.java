@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.RingDetector;
 
-import org.firstinspires.ftc.teamcode.Auto.Auto1_RED;
-import org.firstinspires.ftc.teamcode.Auto.Auto2_RED;
-import org.firstinspires.ftc.teamcode.Auto.Auto3_RED;
-import org.firstinspires.ftc.teamcode.Auto.Auto4_RED;
+import org.firstinspires.ftc.teamcode.Auto.RED.Auto1_RED;
+import org.firstinspires.ftc.teamcode.Auto.RED.Auto2_RED;
+import org.firstinspires.ftc.teamcode.Auto.RED.Auto3_RED;
+import org.firstinspires.ftc.teamcode.Auto.RED.Auto4_RED;
 import org.firstinspires.ftc.teamcode.Auto.AutoRemote;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
