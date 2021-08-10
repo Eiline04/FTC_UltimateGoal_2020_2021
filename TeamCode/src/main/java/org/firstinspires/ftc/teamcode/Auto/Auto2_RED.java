@@ -27,7 +27,7 @@ import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeter
 
 import java.util.Arrays;
 
-@Autonomous
+@Autonomous(group = "RED")
 public class Auto2_RED extends LinearOpMode {
     public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;
@@ -136,7 +136,6 @@ public class Auto2_RED extends LinearOpMode {
             wobbleWrapper.detachGrip();
             sleep(300);
             wobbleWrapper.closeArm();
-            //drivetrain.followTrajectory(backwards_B);
             sleep(500);
             drivetrain.followTrajectory(park_B);
             sleep(500);

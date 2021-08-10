@@ -192,8 +192,29 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
         mode = Mode.TURN;
     }
 
+    public void turnAsync(double angle, double _MAX_ANG_VEL, double _MAX_ANG_ACCEL) {
+        double heading = getPoseEstimate().getHeading();
+
+        lastPoseOnTurn = getPoseEstimate();
+
+        turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+                new MotionState(heading, 0, 0, 0),
+                new MotionState(heading + angle, 0, 0, 0),
+                _MAX_ANG_VEL,
+                _MAX_ANG_ACCEL
+        );
+
+        turnStart = clock.seconds();
+        mode = Mode.TURN;
+    }
+
     public void turn(double angle) {
         turnAsync(angle);
+        waitForIdle();
+    }
+
+    public void turn(double angle, double _MAX_ANG_VEL, double _MAX_ANG_ACCEL) {
+        turnAsync(angle, _MAX_ANG_VEL, _MAX_ANG_ACCEL);
         waitForIdle();
     }
 

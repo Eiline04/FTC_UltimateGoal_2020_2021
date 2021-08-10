@@ -27,7 +27,7 @@ import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeter
 
 import java.util.Arrays;
 
-@Autonomous
+@Autonomous(group = "RED")
 public class Auto4_RED extends LinearOpMode {
     public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;

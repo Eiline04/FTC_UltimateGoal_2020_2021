@@ -19,6 +19,7 @@ import java.text.NumberFormat;
 import java.util.Objects;
 
 @Config
+@Disabled
 @Autonomous(group = "drive")
 public class MaxAccelerationTuner extends LinearOpMode {
     public static double RUNTIME = 3.0;
