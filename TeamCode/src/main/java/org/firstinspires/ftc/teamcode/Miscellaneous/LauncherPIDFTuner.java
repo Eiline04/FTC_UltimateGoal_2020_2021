@@ -4,7 +4,9 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -16,7 +18,8 @@ import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
 
 @Config
-@Autonomous(group = "drive")
+@TeleOp()
+@Disabled
 public class LauncherPIDFTuner extends LinearOpMode {
 
     Hardware robot;
@@ -24,12 +27,12 @@ public class LauncherPIDFTuner extends LinearOpMode {
     ControllerInput controller;
     Intake intake;
 
-    public static double kP = 25;
+    public static double kP = 55;
     public static double kI = 0;
     public static double kD = 0;
     public static double f = 11.5;
 
-    public static double targetVelocity = LauncherWrapper.TeleOpShootingVelocity;
+    public static double targetVelocity = 620;
 
     public static int sleepTime = 300;
 
@@ -53,14 +56,19 @@ public class LauncherPIDFTuner extends LinearOpMode {
 //        telemetry.addData("kI:", defaultPID.i);
 //        telemetry.addData("kD:", defaultPID.d);
 //        telemetry.addData("F:", defaultPID.f);
-//        telemetry.addLine();
-//        telemetry.addLine("Press Play when ready");
-//        telemetry.update();
 
+        telemetry.addLine();
+        telemetry.addLine("Press Play when ready");
+        telemetry.update();
         waitForStart();
 
-        while (!isStopRequested()) {
+        telemetryThread threadObj = new telemetryThread();
+        Thread thread1 = new Thread(threadObj);
+        thread1.start();
+
+        while (opModeIsActive()) {
             controller.update();
+
             if (controller.rightBumperOnce()) {
                 PIDFCoefficients newPID = new PIDFCoefficients(kP, kI, kD, f);
                 launcherWrapper.setPIDFCoeff(newPID);
@@ -72,49 +80,34 @@ public class LauncherPIDFTuner extends LinearOpMode {
             }
 
             if (controller.YOnce()) {
-                launchOneRing();
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
+                launcherWrapper.launchOneRing();
                 sleep(sleepTime);
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
-                launchOneRing();
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
+                launcherWrapper.launchOneRing();
                 sleep(sleepTime);
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
-                launchOneRing();
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
+                launcherWrapper.launchOneRing();
                 sleep(sleepTime);
-                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-                telemetry.addData("Target Velocity", targetVelocity);
-                telemetry.update();
             }
 
             if (controller.BOnce()) {
-                launchOneRing();
+                launcherWrapper.launchOneRing();
             }
 
             if (controller.dpadUpOnce()) intake.startIntake();
             if (controller.dpadDownOnce()) intake.stopIntake();
-
-            telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
-            telemetry.addData("Target Velocity", targetVelocity);
-            telemetry.update();
-
         }
     }
 
-    void launchOneRing() {
-        launcherWrapper.setServoPosition(0.5f);
-        sleep(150);
-        launcherWrapper.setServoPosition(0.1f);
+    class telemetryThread implements Runnable {
+        @Override
+        public void run() {
+            telemetry.log().clear();
+            while (opModeIsActive()) {
+                telemetry.addData("Current Velocity", launcherWrapper.getAngularVelocity());
+                telemetry.addData("Target Velocity", targetVelocity);
+                telemetry.update();
+                sleep(3);
+            }
+
+        }
     }
 }

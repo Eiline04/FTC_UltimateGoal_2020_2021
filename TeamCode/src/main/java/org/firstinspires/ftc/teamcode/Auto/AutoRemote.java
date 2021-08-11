@@ -31,7 +31,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.AutoShooti
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
 
 @Autonomous(name = "Auto Remote")
-//@Disabled
+@Disabled
 public class AutoRemote extends LinearOpMode {
 
     public static volatile CameraThread.RingDeterminationPipeline.RingPosition ringPosition;
@@ -59,11 +59,9 @@ public class AutoRemote extends LinearOpMode {
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.closeStopper();
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
-
-        launcher.setPIDFCoeff(new PIDFCoefficients(25,0,0,11.5));
 
         positionDAS = new DasPositions(robot.servoDAS);
 

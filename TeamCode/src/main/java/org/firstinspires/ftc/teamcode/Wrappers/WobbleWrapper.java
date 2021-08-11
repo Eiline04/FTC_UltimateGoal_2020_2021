@@ -5,10 +5,20 @@ import org.openftc.revextensions2.ExpansionHubServo;
 public class WobbleWrapper {
     public ExpansionHubServo gripper;
     public ExpansionHubServo arm;
+    public ExpansionHubServo wobbleRelease;
 
-    public WobbleWrapper(ExpansionHubServo gripper, ExpansionHubServo arm) {
+    public WobbleWrapper(ExpansionHubServo gripper, ExpansionHubServo arm, ExpansionHubServo wobbleRelease) {
         this.gripper = gripper;
         this.arm = arm;
+        this.wobbleRelease = wobbleRelease;
+    }
+
+    public void wobbleRelease() {
+        wobbleRelease.setPosition(0.5);
+    }
+
+    public void resetWobbleRelease() {
+        wobbleRelease.setPosition(0.85);
     }
 
     public void attachGrip() {

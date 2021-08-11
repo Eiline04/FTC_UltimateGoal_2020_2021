@@ -55,11 +55,9 @@ public class Auto1_BLUE extends LinearOpMode {
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.closeStopper();
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
-
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
 
         initWebcam();
         sleep(1000);
@@ -74,6 +72,7 @@ public class Auto1_BLUE extends LinearOpMode {
         launcher.setServoPosition(0.7f);
         wobbleWrapper.closeArm();
         wobbleWrapper.attachGrip();
+        wobbleWrapper.resetWobbleRelease();
 
         robot.enableBulkDataPolling();
 
@@ -98,10 +97,10 @@ public class Auto1_BLUE extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(195))).build();
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(187))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(625, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -119,10 +118,8 @@ public class Auto1_BLUE extends LinearOpMode {
             buildPathsZero();
 
             drivetrain.followTrajectory(toZoneA);
-            sleep(100);
-            wobbleWrapper.detachGrip();
-            sleep(300);
-            wobbleWrapper.closeArm();
+            wobbleWrapper.wobbleRelease();
+            sleep(500);
             drivetrain.followTrajectory(park_A);
             sleep(500);
         }
@@ -131,14 +128,7 @@ public class Auto1_BLUE extends LinearOpMode {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB);
-
-            //rotate to 0 degrees
-            rotateTo(Math.toRadians(0), 0.6);
-
-            sleep(700);
-            wobbleWrapper.detachGrip();
-            sleep(300);
-            wobbleWrapper.closeArm();
+            wobbleWrapper.wobbleRelease();
             sleep(500);
             drivetrain.followTrajectory(park_B);
             sleep(500);
@@ -148,14 +138,8 @@ public class Auto1_BLUE extends LinearOpMode {
             buildPathsFour();
 
             drivetrain.followTrajectory(toZoneC);
-
-            //rotate to 0 degrees
-            rotateTo(Math.toRadians(0), 0.6);
-
-            sleep(700);
-            wobbleWrapper.detachGrip();
-            sleep(300);
-            wobbleWrapper.closeArm();
+            wobbleWrapper.wobbleRelease();
+            sleep(500);
             drivetrain.followTrajectory(park_C);
             sleep(500);
         }
@@ -171,41 +155,30 @@ public class Auto1_BLUE extends LinearOpMode {
     }
 
     void buildPathsZero() {
-        toZoneA = drivetrain.trajectoryBuilder(toShooting.end(), false)
-                .addTemporalMarker(0.70, 0.0, () -> {
-                    wobbleWrapper.openArm();
-                })
-                .splineToSplineHeading(new Pose2d(35.0, -5.0, Math.toRadians(180.0)), 0.0)
-                .splineToSplineHeading(new Pose2d(55.0, 20.0, Math.toRadians(270.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(17.0, 43.0, Math.toRadians(0.0)), Math.toRadians(180.0)).build();
+        toZoneA = drivetrain.trajectoryBuilder(toShooting.end(), true)
+                .lineToLinearHeading(new Pose2d(20.0, 46.0, Math.toRadians(210.0))).build();
 
         park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .strafeTo(new Vector2d(10.0, -10.0)).build();
+                .splineToLinearHeading(new Pose2d(10.0, -10.0, Math.toRadians(180.0)), Math.toRadians(180.0)).build();
     }
 
     Trajectory toZoneA, park_A;
 
     void buildPathsOne() {
-        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), false)
-                .addTemporalMarker(0.50, 0.0, () -> {
-                    wobbleWrapper.openArm();
-                })
+        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .lineToLinearHeading(new Pose2d(37.0, 23.0, Math.toRadians(180.0))).build();
 
-        park_B = drivetrain.trajectoryBuilder(toZoneB.end().minus(new Pose2d(0, 0, Math.toRadians(180.0))), false) //minus 180deg after rotation
+        park_B = drivetrain.trajectoryBuilder(toZoneB.end(), false)
                 .strafeTo(new Vector2d(10.0, -10.0)).build();
     }
 
     Trajectory toZoneB, park_B;
 
     void buildPathsFour() {
-        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
-                .addTemporalMarker(0.50, 0.0, () -> {
-                    wobbleWrapper.openArm();
-                })
+        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .splineToSplineHeading(new Pose2d(60.0, 45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
-        park_C = drivetrain.trajectoryBuilder(toZoneC.end().minus(new Pose2d(0, 0, Math.toRadians(180.0))), true) //minus 180deg after rotation
+        park_C = drivetrain.trajectoryBuilder(toZoneC.end(), true)
                 .strafeTo(new Vector2d(10.0, -10.0)).build();
     }
 

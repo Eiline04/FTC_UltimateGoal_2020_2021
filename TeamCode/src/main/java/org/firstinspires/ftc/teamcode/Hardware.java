@@ -27,6 +27,7 @@ public class Hardware {
     public ExpansionHubServo gripperServo = null;
     public ExpansionHubServo armServo = null;
     public ExpansionHubServo ringStopper = null;
+    public ExpansionHubServo wobbleRelease = null;
 
     public ExpansionHubEx expansionHub1;
     public ExpansionHubEx expansionHub2;
@@ -54,7 +55,7 @@ public class Hardware {
         //-----------------------------Wobble Mechanism------------------------------------------
         gripperServo = hwMap.get(ExpansionHubServo.class, "gripperServo");
         armServo = hwMap.get(ExpansionHubServo.class, "armServo");
-        armServo.resetDeviceConfigurationForOpMode();
+        wobbleRelease = hwMap.get(ExpansionHubServo.class,"wobbleRelease");
 
         //-----------------------------Wheels------------------------------------------
         frontLeftWheel = hwMap.get(ExpansionHubMotor.class, "FL");

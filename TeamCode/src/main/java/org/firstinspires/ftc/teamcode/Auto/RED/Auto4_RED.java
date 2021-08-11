@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -54,8 +55,8 @@ public class Auto4_RED extends LinearOpMode {
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.closeStopper();
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
         initWebcam();
@@ -98,7 +99,7 @@ public class Auto4_RED extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(185.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -138,7 +139,7 @@ public class Auto4_RED extends LinearOpMode {
             intake.startIntake();
             drivetrain.followTrajectory(collectB);
 
-            launcher.setVelocity(620, AngleUnit.DEGREES);
+            launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
             launcher.openStopper();
             sleep(500);
 
@@ -159,6 +160,39 @@ public class Auto4_RED extends LinearOpMode {
         if (ringPosition == RingPosition.FOUR) {
             buildPathsFour();
 
+            dasPositions.setPositionDAS(0.8);
+            drivetrain.followTrajectory(toZoneC);
+            sleep(100);
+            wobbleWrapper.detachGrip();
+            sleep(300);
+            wobbleWrapper.closeArm();
+
+            drivetrain.followTrajectory(collectC);
+            intake.startIntake();
+            sleep(100);
+
+            launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+            launcher.openStopper();
+            sleep(300);
+
+            drivetrain.followTrajectory(forwardC);
+
+            drivetrain.followTrajectory(toShooting2C);
+            dasPositions.setPositionDAS(0.75);
+            intake.stopIntake();
+            sleep(200);
+
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(300);
+            launcher.stop();
+
+            drivetrain.followTrajectory(parkC);
         }
 
         drivetrain.updatePoseEstimate();
@@ -175,8 +209,8 @@ public class Auto4_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(12.0, -48.0, Math.toRadians(180.0))).build();
 
         park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToSplineHeading(new Pose2d(50.0, -20.0, Math.toRadians(270.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 14.0, 0.0), Math.toRadians(180.0)).build();
+                .splineToSplineHeading(new Pose2d(50.0, -25.0, Math.toRadians(270.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(10.0, 0.0, 0.0), Math.toRadians(180.0)).build();
     }
     Trajectory toZoneA, park_A;
 
@@ -199,8 +233,28 @@ public class Auto4_RED extends LinearOpMode {
     Trajectory toZoneB, collectB, toShooting2B, parkB;
 
     void buildPathsFour() {
+        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), true)
+                .addTemporalMarker(0.50, 0.0, () -> {
+                    wobbleWrapper.openArm();
+                })
+                .splineToSplineHeading(new Pose2d(60.0, -45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
+        collectC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
+                .splineToConstantHeading(new Vector2d(-10.0, -35.0), Math.toRadians(180.0)).build();
+
+        forwardC = drivetrain.trajectoryBuilder(collectC.end(), false)
+                .addTemporalMarker(0.70, 0.0, () -> {
+                    launcher.launchOneRing();
+                })
+                .forward(35.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
+
+        toShooting2C = drivetrain.trajectoryBuilder(forwardC.end(),true)
+                .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(186.0))).build();
+
+        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
+                .lineToLinearHeading(new Pose2d(15.0, -30.0, Math.toRadians(180.0))).build();
     }
+    Trajectory toZoneC, collectC, forwardC, toShooting2C, parkC;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)

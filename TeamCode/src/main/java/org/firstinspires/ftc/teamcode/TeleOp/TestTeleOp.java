@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 
 @TeleOp()
-@Disabled
 public class TestTeleOp extends LinearOpMode {
 
     LauncherWrapper launcher;
@@ -31,13 +30,25 @@ public class TestTeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new Hardware();
         robot.init(hardwareMap);
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         wobbleWrapper.closeArm();
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
 
         controller1 = new ControllerInput(gamepad1);
         controller2 = new ControllerInput(gamepad2);
         waitForStart();
+
+        while (opModeIsActive()) {
+            controller1.update();
+
+            if(controller1.AOnce()) {
+                wobbleWrapper.wobbleRelease();
+            }
+
+            if(controller1.BOnce()) {
+                wobbleWrapper.resetWobbleRelease();
+            }
+        }
     }
 }

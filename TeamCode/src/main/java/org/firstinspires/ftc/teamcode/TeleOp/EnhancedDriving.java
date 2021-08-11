@@ -93,7 +93,7 @@ public class EnhancedDriving extends LinearOpMode {
         robot.enableBulkDataPolling();
 
         //set PIDF Coeffs for launcher
-        launcher.setPIDFCoeff(new PIDFCoefficients(25,0,0,11.5));
+        launcher.setPIDFCoeff(new PIDFCoefficients(55,0,0,11.5));
 
         waitForStart();
 
@@ -198,7 +198,7 @@ public class EnhancedDriving extends LinearOpMode {
         robot = new Hardware();
         robot.init(hardwareMap);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.setServoPosition(0.7f);
         launcher.closeStopper();

@@ -54,8 +54,8 @@ public class Auto1_RED extends LinearOpMode {
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.closeStopper();
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
         initWebcam();

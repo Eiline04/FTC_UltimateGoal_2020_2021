@@ -95,9 +95,9 @@ public class SimpleDriving extends LinearOpMode {
         robot = new Hardware();
         robot.init(hardwareMap);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
         launcher.setServoPosition(0.7f);
         launcher.closeStopper();
 

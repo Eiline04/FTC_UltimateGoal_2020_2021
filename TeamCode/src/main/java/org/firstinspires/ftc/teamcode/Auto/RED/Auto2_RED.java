@@ -54,8 +54,8 @@ public class Auto2_RED extends LinearOpMode {
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.closeStopper();
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
+        launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
+        wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
         initWebcam();
@@ -98,7 +98,7 @@ public class Auto2_RED extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(185.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -153,8 +153,6 @@ public class Auto2_RED extends LinearOpMode {
             wobbleWrapper.closeArm();
             drivetrain.followTrajectory(park_C);
             sleep(500);
-
-            dasPositions.startDAS();
         }
 
         drivetrain.updatePoseEstimate();

@@ -20,6 +20,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
  *  Thread that handles the webcam init and streaming for RingDeterminationPipeline
  */
 
+@Deprecated
 public class CameraThread implements Runnable {
     static final Point regionTopLeftCorner = new Point(230, 140);
 
