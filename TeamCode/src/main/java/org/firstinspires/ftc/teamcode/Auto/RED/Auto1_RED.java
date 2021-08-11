@@ -58,8 +58,6 @@ public class Auto1_RED extends LinearOpMode {
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-
         initWebcam();
         sleep(1000);
         cameraThread = new AdvancedCameraThread(webcam);
@@ -86,7 +84,8 @@ public class Auto1_RED extends LinearOpMode {
         if (isStopRequested()) return;
 
         double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
-        ringPosition = AdvancedCameraThread.getResult(rectHeight);
+        double rectWidth = AdvancedCameraThread.RingPipeline.rectWidth;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight, rectWidth);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
@@ -99,7 +98,7 @@ public class Auto1_RED extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(180.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(625, AngleUnit.DEGREES); //540
+        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 

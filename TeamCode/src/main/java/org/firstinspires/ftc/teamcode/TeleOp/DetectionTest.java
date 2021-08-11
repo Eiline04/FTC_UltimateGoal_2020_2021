@@ -34,23 +34,28 @@ public class DetectionTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
-            if(rectHeight < 5) {
-                telemetry.addLine("ZERO");
+            double rectWidth = AdvancedCameraThread.RingPipeline.rectWidth;
+            CameraThread.RingDeterminationPipeline.RingPosition position = AdvancedCameraThread.getResult(rectHeight,rectWidth);
+
+            if(position == CameraThread.RingDeterminationPipeline.RingPosition.NONE) {
+                telemetry.addLine("NONE");
+                telemetry.addData("Width", rectWidth);
+                telemetry.addData("Height", rectHeight);
                 telemetry.update();
-                sleep(100);
                 continue;
             }
-
-            if(rectHeight > AdvancedCameraThread.ONE_HEIGHT && rectHeight < AdvancedCameraThread.FOUR_HEIGHT) {
+            if(position == CameraThread.RingDeterminationPipeline.RingPosition.ONE) {
                 telemetry.addLine("ONE");
+                telemetry.addData("Width", rectWidth);
+                telemetry.addData("Height", rectHeight);
                 telemetry.update();
-                sleep(100);
                 continue;
             }
 
             telemetry.addLine("FOUR");
+            telemetry.addData("Width", rectWidth);
+            telemetry.addData("Height", rectHeight);
             telemetry.update();
-            sleep(100);
         }
     }
 

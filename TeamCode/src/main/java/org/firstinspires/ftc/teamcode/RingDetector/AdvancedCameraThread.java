@@ -86,7 +86,8 @@ public class AdvancedCameraThread implements Runnable {
         this.active = true;
     }
 
-    public static CameraThread.RingDeterminationPipeline.RingPosition getResult(double rectHeight) {
+    public static CameraThread.RingDeterminationPipeline.RingPosition getResult(double rectHeight, double rectWidth) {
+        if(rectWidth < 25 || rectWidth > 70) return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
         if(rectHeight < ONE_HEIGHT)
             return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
 
@@ -105,6 +106,7 @@ public class AdvancedCameraThread implements Runnable {
      */
     public static class RingPipeline extends OpenCvPipeline {
         public static volatile double rectHeight = 0;
+        public static volatile double rectWidth = 0;
 
         enum Stage {
             BLUR,
@@ -134,9 +136,9 @@ public class AdvancedCameraThread implements Runnable {
             stageToRenderToViewport = stages[nextStageNum];
         }
 
-        Point p1 = new Point(100, 120);
+        Point p1 = new Point(5, 120);
         Point p2 = new Point(319, 120);
-        Point p3 = new Point(100, 239);
+        Point p3 = new Point(5, 239);
         Point p4 = new Point(319, 239);
         Rect rectCrop = new Rect((int) p1.x, (int) p1.y, (int) (p4.x - p1.x + 1), (int) (p4.y - p1.y + 1));
 
@@ -188,6 +190,7 @@ public class AdvancedCameraThread implements Runnable {
                 }
             }
             rectHeight = ring.height;
+            rectWidth = ring.width;
             Imgproc.rectangle(input, ring, new Scalar(0, 255, 0), 5);
 
             contoursList.clear();

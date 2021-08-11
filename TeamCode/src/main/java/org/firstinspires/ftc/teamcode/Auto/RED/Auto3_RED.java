@@ -15,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
+import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
@@ -33,7 +33,7 @@ import java.util.Arrays;
 public class Auto3_RED extends LinearOpMode {
     public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;
-    CameraThread cameraThread;
+    AdvancedCameraThread cameraThread;
 
     LauncherWrapper launcher;
     WobbleWrapper wobbleWrapper;
@@ -59,18 +59,15 @@ public class Auto3_RED extends LinearOpMode {
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-
         initWebcam();
         sleep(1000);
-        cameraThread = new CameraThread(webcam);
+        cameraThread = new AdvancedCameraThread(webcam);
         Thread cameraRunner = new Thread(cameraThread);
         cameraRunner.start();
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.INIT);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.INIT);
         sleep(2500);
-        cameraThread.setState(CameraThread.CAMERA_STATE.STREAM);
-        sleep(1000);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.STREAM);
 
         launcher.setServoPosition(0.7f);
         wobbleWrapper.closeArm();
@@ -85,23 +82,24 @@ public class Auto3_RED extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
-        launcher.openStopper();
-
         if (isStopRequested()) return;
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.DETECT);
-        sleep(50);
-        cameraThread.setState(CameraThread.CAMERA_STATE.KILL);
+        double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
+        double rectWidth = AdvancedCameraThread.RingPipeline.rectWidth;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight, rectWidth);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
+
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.KILL);
 
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(180.0))).build();
 
-        launcher.setVelocity(625, AngleUnit.DEGREES); //540
+        launcher.openStopper();
+        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 

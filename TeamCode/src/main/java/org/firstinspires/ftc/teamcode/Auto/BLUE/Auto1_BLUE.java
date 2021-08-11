@@ -87,7 +87,8 @@ public class Auto1_BLUE extends LinearOpMode {
         if (isStopRequested()) return;
 
         double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
-        ringPosition = AdvancedCameraThread.getResult(rectHeight);
+        double rectWidth = AdvancedCameraThread.RingPipeline.rectWidth;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight, rectWidth);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();

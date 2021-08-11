@@ -26,6 +26,8 @@ public class LauncherWrapper {
     public static double TeleOpShootingVelocity = 600; //555;
     public static double TeleOpPowerShotVelocity = 557; //520 //best 555
 
+    public static final double shootingVelocity = 620;
+
     public static double AutoShootingVelocity = 615;
     public static double AutoPowerShotVelocity = 502;
 

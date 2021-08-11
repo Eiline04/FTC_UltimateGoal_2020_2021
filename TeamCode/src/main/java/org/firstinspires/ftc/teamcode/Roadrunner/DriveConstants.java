@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 @Config
 public class DriveConstants {
-
     public static final double TICKS_PER_REV = 537.6;   //irrelevant for us since we don't use drive encoders
     public static final double MAX_RPM = 312;
 

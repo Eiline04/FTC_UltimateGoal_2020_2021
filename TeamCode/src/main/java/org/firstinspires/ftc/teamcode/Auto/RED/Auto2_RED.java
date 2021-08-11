@@ -58,8 +58,6 @@ public class Auto2_RED extends LinearOpMode {
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo);
         intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
 
-        launcher.setPIDFCoeff(new PIDFCoefficients(25, 0, 0, 11.5));
-
         initWebcam();
         sleep(1000);
         cameraThread = new AdvancedCameraThread(webcam);
@@ -86,7 +84,8 @@ public class Auto2_RED extends LinearOpMode {
         if (isStopRequested()) return;
 
         double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
-        ringPosition = AdvancedCameraThread.getResult(rectHeight);
+        double rectWidth = AdvancedCameraThread.RingPipeline.rectWidth;
+        ringPosition = AdvancedCameraThread.getResult(rectHeight, rectWidth);
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
@@ -99,7 +98,7 @@ public class Auto2_RED extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(185.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(622, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -172,14 +171,14 @@ public class Auto2_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(12.0, -48.0, Math.toRadians(180.0))).build();
 
         park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToSplineHeading(new Pose2d(50.0, -20.0, Math.toRadians(270.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 14.0, 0.0), Math.toRadians(180.0)).build();
+                .splineToSplineHeading(new Pose2d(50.0, -25.0, Math.toRadians(270.0)), Math.toRadians(90.0))
+                .splineToSplineHeading(new Pose2d(10.0, 0.0, 0.0), Math.toRadians(180.0)).build();
     }
 
     Trajectory toZoneA, park_A;
 
     void buildPathsOne() {
-        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), false)
+        toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
@@ -192,13 +191,13 @@ public class Auto2_RED extends LinearOpMode {
     Trajectory toZoneB, park_B;
 
     void buildPathsFour() {
-        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
+        toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
                 .splineToSplineHeading(new Pose2d(60.0, -45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
-        park_C = drivetrain.trajectoryBuilder(toZoneC.end(), true)
+        park_C = drivetrain.trajectoryBuilder(toZoneC.end(), false)
                 .lineToConstantHeading(new Vector2d(55.0, 0.0))
                 .splineToConstantHeading(new Vector2d(10.0, 10.0), Math.toRadians(180.0)).build();
     }
