@@ -43,7 +43,7 @@ public class Auto1_BLUE extends LinearOpMode {
     DasPositions dasPositions;
 
     MecanumDrive drivetrain;
-    Pose2d startPose = new Pose2d(-62.8, 23.0, Math.toRadians(180.0));
+    Pose2d startPose = new Pose2d(-62.8, 25.0, Math.toRadians(180.0));
 
     private final int launchSleepTime = 300;
     Trajectory toShooting;
@@ -97,10 +97,10 @@ public class Auto1_BLUE extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(187))).build();
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(195))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity - 19.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -148,10 +148,6 @@ public class Auto1_BLUE extends LinearOpMode {
         PoseStorage.currentPose = drivetrain.getPoseEstimate(); //store pose
         wobbleWrapper.attachGrip();
         sleep(300);
-    }
-
-    private void rotateTo(double rad, double maxPower) {
-
     }
 
     void buildPathsZero() {

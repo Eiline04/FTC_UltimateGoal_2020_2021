@@ -87,7 +87,7 @@ public class AdvancedCameraThread implements Runnable {
     }
 
     public static CameraThread.RingDeterminationPipeline.RingPosition getResult(double rectHeight, double rectWidth) {
-        if(rectWidth < 25 || rectWidth > 70) return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
+        if(rectWidth < 15 || rectWidth > 70) return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
         if(rectHeight < ONE_HEIGHT)
             return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
 
@@ -148,7 +148,7 @@ public class AdvancedCameraThread implements Runnable {
         Mat CbInv = new Mat();
         Mat thresholdMat = new Mat();
         Mat newmat = new Mat();
-        MatOfPoint m;
+        MatOfPoint m = new MatOfPoint();
         Rect ring = new Rect();
         private List<MatOfPoint> contoursList = new ArrayList<>();
         private List<Mat> splitMat = new ArrayList<>();

@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpPowerShotVelocity;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
 
-@TeleOp
+@TeleOp(group = "Main")
 public class SimpleDriving extends LinearOpMode {
     ControllerInput controller1;
     ControllerInput controller2;
@@ -50,8 +50,6 @@ public class SimpleDriving extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        telemetry.log().clear();
-
         MecanumDrive drivetrain = new MecanumDrive(hardwareMap);
         initSubsystems();
         controller1 = new ControllerInput(gamepad1);
@@ -106,6 +104,7 @@ public class SimpleDriving extends LinearOpMode {
 
         wobbleWrapper.closeArm();
         wobbleWrapper.detachGrip();
+        wobbleWrapper.resetWobbleRelease();
     }
 
     void handleSubsystems() {

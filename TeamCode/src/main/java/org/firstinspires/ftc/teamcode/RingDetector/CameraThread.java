@@ -17,7 +17,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 /**
- *  Thread that handles the webcam init and streaming for RingDeterminationPipeline
+ *  Thread that handles the webcam init and streaming for RingDeterminationPipeline.
+ *  Currently deprecated
  */
 
 @Deprecated
@@ -62,11 +63,7 @@ public class CameraThread implements Runnable {
                 }
 
                 if (state == CAMERA_STATE.DETECT) {
-                    AutoRemote.ringPosition = RingDeterminationPipeline.position;
-                    Auto1_RED.ringPosition = RingDeterminationPipeline.position;
-                    Auto2_RED.ringPosition = RingDeterminationPipeline.position;
-                    Auto3_RED.ringPosition = RingDeterminationPipeline.position;
-                    Auto4_RED.ringPosition = RingDeterminationPipeline.position;
+
                 }
 
                 if (state == CAMERA_STATE.KILL) {

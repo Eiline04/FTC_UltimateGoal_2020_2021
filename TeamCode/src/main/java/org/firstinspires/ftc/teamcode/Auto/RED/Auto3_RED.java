@@ -76,7 +76,7 @@ public class Auto3_RED extends LinearOpMode {
         robot.enableBulkDataPolling();
 
         dasPositions = new DasPositions(robot.servoDAS);
-        dasPositions.setPositionDAS(0.704);
+        dasPositions.setPositionDAS(0.7);
 
         telemetry.addLine("Ready!");
         telemetry.update();
@@ -99,7 +99,7 @@ public class Auto3_RED extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(180.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity - 9.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -142,7 +142,7 @@ public class Auto3_RED extends LinearOpMode {
             intake.startIntake();
             drivetrain.followTrajectory(collectB);
 
-            launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+            launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
             sleep(100);
 
             drivetrain.followTrajectory(toShooting2B);
@@ -172,7 +172,7 @@ public class Auto3_RED extends LinearOpMode {
             intake.startIntake();
             sleep(100);
 
-            launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+            launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
             launcher.openStopper();
             sleep(300);
 

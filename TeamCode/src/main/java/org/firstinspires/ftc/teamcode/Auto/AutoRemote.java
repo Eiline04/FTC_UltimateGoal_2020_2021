@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
+import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -27,16 +27,17 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.AutoShootingVelocity;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
+import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
 
 @Autonomous(name = "Auto Remote")
 @Disabled
+@Deprecated
 public class AutoRemote extends LinearOpMode {
 
-    public static volatile CameraThread.RingDeterminationPipeline.RingPosition ringPosition;
+    public static volatile RingPosition ringPosition;
     OpenCvCamera webcam;
-    CameraThread cameraThread;
+    AdvancedCameraThread cameraThread;
 
     DasPositions positionDAS;
 
@@ -50,7 +51,7 @@ public class AutoRemote extends LinearOpMode {
     MecanumDrive drivetrain;
     Pose2d startPose = new Pose2d(-62.95, -23.62, Math.toRadians(180.0));
 
-    private final int launchSleepTime = 250;
+    private final int launchSleepTime = 300;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -67,14 +68,13 @@ public class AutoRemote extends LinearOpMode {
 
         initWebcam();
         sleep(1000);
-        cameraThread = new CameraThread(webcam);
+        cameraThread = new AdvancedCameraThread(webcam);
         Thread cameraRunner = new Thread(cameraThread);
         cameraRunner.start();
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.INIT);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.INIT);
         sleep(2500);
-        cameraThread.setState(CameraThread.CAMERA_STATE.STREAM);
-        sleep(1000);
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.STREAM);
 
         launcher.setServoPosition(0.7f);
         wobbleWrapper.closeArm();
@@ -91,9 +91,7 @@ public class AutoRemote extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
 
-        cameraThread.setState(CameraThread.CAMERA_STATE.DETECT);
-        sleep(50);
-        cameraThread.setState(CameraThread.CAMERA_STATE.KILL);
+
 
         telemetry.addData("Result", ringPosition);
         telemetry.update();
@@ -101,8 +99,10 @@ public class AutoRemote extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
+        cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.KILL);
+
         //-------------------------------NO RINGS---------------------------------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.NONE) {
+        if (ringPosition == RingPosition.NONE) {
             buildPathsNone();
 
             drivetrain.followTrajectory(toZoneA); //go to zone A. Arm is lowered with temporal marker
@@ -111,7 +111,7 @@ public class AutoRemote extends LinearOpMode {
             sleep(200);
             wobbleWrapper.setArmPosition(0.5f);
 
-            launcher.setVelocity(AutoShootingVelocity, AngleUnit.DEGREES);
+            launcher.setVelocity(620, AngleUnit.DEGREES);
             intake.startIntake();
             drivetrain.followTrajectory(toShootingA);
             launcher.launchOneRing();
@@ -148,7 +148,7 @@ public class AutoRemote extends LinearOpMode {
         }
 
         //-------------------------------ONE RING--------------------------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.ONE) {
+        if (ringPosition == RingPosition.ONE) {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB); //go to zone b
@@ -157,7 +157,7 @@ public class AutoRemote extends LinearOpMode {
             sleep(200);
             wobbleWrapper.setArmPosition(0.5f);
 
-            launcher.setVelocity(AutoShootingVelocity, AngleUnit.DEGREES);
+            launcher.setVelocity(615, AngleUnit.DEGREES);
             intake.startIntake();
             drivetrain.followTrajectory(toShootingB);
             sleep(200);
@@ -169,7 +169,7 @@ public class AutoRemote extends LinearOpMode {
             sleep(launchSleepTime);
             launcher.launchOneRing();
 
-            launcher.setVelocity(TeleOpShootingVelocity, AngleUnit.DEGREES);
+            launcher.setVelocity(615, AngleUnit.DEGREES);
             drivetrain.followTrajectory(toMiddleRingB);
             launcher.launchOneRing();
             sleep(launchSleepTime);
@@ -202,7 +202,7 @@ public class AutoRemote extends LinearOpMode {
         }
 
         //-------------------------------FOUR RING--------------------------------
-        if (ringPosition == CameraThread.RingDeterminationPipeline.RingPosition.FOUR) {
+        if (ringPosition == RingPosition.FOUR) {
             buildPathsFour();
 
             drivetrain.followTrajectory(toZoneC);
@@ -210,7 +210,7 @@ public class AutoRemote extends LinearOpMode {
             sleep(200);
             wobbleWrapper.setArmPosition(0.6f);
 
-            launcher.setVelocity(AutoShootingVelocity + 40, AngleUnit.DEGREES);
+            launcher.setVelocity(615 + 40, AngleUnit.DEGREES);
             dasPositions.setPositionDAS(0.76);
 
             drivetrain.followTrajectory(toStackC);
@@ -227,7 +227,7 @@ public class AutoRemote extends LinearOpMode {
             intake.startIntake();
             wobbleWrapper.setArmPosition(0.5f);
 
-            launcher.setVelocity(AutoShootingVelocity + 45, AngleUnit.DEGREES);
+            launcher.setVelocity(615 + 45, AngleUnit.DEGREES);
             drivetrain.followTrajectory(forwardC);
             drivetrain.followTrajectory(backwardsC);
             drivetrain.followTrajectory(forwardsC_2);

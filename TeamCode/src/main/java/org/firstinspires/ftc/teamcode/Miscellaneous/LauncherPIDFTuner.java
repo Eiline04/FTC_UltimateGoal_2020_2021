@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
 
 @Config
-@TeleOp()
+@TeleOp
 @Disabled
 public class LauncherPIDFTuner extends LinearOpMode {
 

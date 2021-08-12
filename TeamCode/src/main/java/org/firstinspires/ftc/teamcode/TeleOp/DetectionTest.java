@@ -11,7 +11,7 @@ import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
 
-@TeleOp()
+@TeleOp(group = "Misc")
 public class DetectionTest extends LinearOpMode {
 
     OpenCvCamera webcam;

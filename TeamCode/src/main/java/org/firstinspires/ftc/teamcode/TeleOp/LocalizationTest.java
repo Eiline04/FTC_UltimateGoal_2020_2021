@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Miscellaneous.ControllerInput;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 
-@TeleOp(name = "Localization Test")
+@TeleOp(name = "Localization Test", group = "Misc")
 public class LocalizationTest extends LinearOpMode {
 
     @Override

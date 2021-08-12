@@ -23,13 +23,10 @@ public class LauncherWrapper {
     public ExpansionHubServo launchServo;
     public ExpansionHubServo ringStopper;
 
-    public static double TeleOpShootingVelocity = 600; //555;
-    public static double TeleOpPowerShotVelocity = 557; //520 //best 555
+    public static double TeleOpShootingVelocity = 600;
+    public static double TeleOpPowerShotVelocity = 557;
 
-    public static final double shootingVelocity = 617;
-
-    public static double AutoShootingVelocity = 615;
-    public static double AutoPowerShotVelocity = 502;
+    public static final double shootingVelocity = 612;
 
     private double kP = 0;
     private double kI = 0;

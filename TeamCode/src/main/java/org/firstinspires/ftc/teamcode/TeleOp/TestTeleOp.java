@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 
-@TeleOp()
+@TeleOp(group = "Misc")
 public class TestTeleOp extends LinearOpMode {
 
     LauncherWrapper launcher;

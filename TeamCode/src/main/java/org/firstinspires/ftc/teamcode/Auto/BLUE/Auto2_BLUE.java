@@ -97,7 +97,7 @@ public class Auto2_BLUE extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(170.0))).build();
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(165.0))).build();
 
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
@@ -150,10 +150,6 @@ public class Auto2_BLUE extends LinearOpMode {
         sleep(300);
     }
 
-    private void rotateTo(double rad, double maxPower) {
-
-    }
-
     void buildPathsZero() {
         toZoneA = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .lineToLinearHeading(new Pose2d(12.0, 48.0, Math.toRadians(180.0))).build();
@@ -168,10 +164,10 @@ public class Auto2_BLUE extends LinearOpMode {
 
     void buildPathsOne() {
         toZoneB = drivetrain.trajectoryBuilder(toShooting.end(), true)
-                .lineToLinearHeading(new Pose2d(20.0, 37.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(20.0, 37.0, Math.toRadians(100.0))).build();
 
         park_B = drivetrain.trajectoryBuilder(toZoneB.end(), true)
-                .lineToLinearHeading(new Pose2d(10.0,0.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(10.0,0.0, Math.toRadians(0.0))).build();
     }
 
     Trajectory toZoneB, park_B;
