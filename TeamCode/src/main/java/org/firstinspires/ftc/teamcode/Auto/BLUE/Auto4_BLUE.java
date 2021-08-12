@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
+import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -157,9 +158,33 @@ public class Auto4_BLUE extends LinearOpMode {
 
             drivetrain.followTrajectory(toZoneC);
             wobbleWrapper.wobbleRelease();
-            sleep(500);
+
+            drivetrain.followTrajectory(collectC);
+            intake.startIntake();
+            sleep(100);
+
+            launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
+            launcher.openStopper();
+            sleep(300);
+
+            drivetrain.followTrajectory(forwardC);
+
+            launcher.setVelocity(LauncherWrapper.shootingVelocity - 19.0, AngleUnit.DEGREES);
+            drivetrain.followTrajectory(toShooting2C);
+            intake.stopIntake();
+            sleep(200);
+
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(launchSleepTime);
+            launcher.launchOneRing();
+            sleep(300);
+            launcher.stop();
+
             drivetrain.followTrajectory(park_C);
-            sleep(500);
         }
 
         drivetrain.updatePoseEstimate();
@@ -203,12 +228,23 @@ public class Auto4_BLUE extends LinearOpMode {
         toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), true)
                 .splineToSplineHeading(new Pose2d(60.0, 45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
-        park_C = drivetrain.trajectoryBuilder(toZoneC.end(), true)
-                .lineToConstantHeading(new Vector2d(55.0, 20.0))
-                .splineToConstantHeading(new Vector2d(10.0, 10.0), Math.toRadians(180.0)).build();
+        collectC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
+                .lineToConstantHeading(new Vector2d(-10.0,36.0)).build();
+
+        forwardC = drivetrain.trajectoryBuilder(collectC.end(), false)
+                .addTemporalMarker(0.60, 0.0, () -> {
+                    launcher.launchOneRing();
+                })
+                .forward(35.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
+
+        toShooting2C = drivetrain.trajectoryBuilder(forwardC.end(), true)
+                .lineToLinearHeading(new Pose2d(-12.0,35.0, Math.toRadians(175.0))).build();
+
+        park_C = drivetrain.trajectoryBuilder(toZoneC.end(), false)
+                .lineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0))).build();
     }
 
-    Trajectory toZoneC, park_C;
+    Trajectory toZoneC, collectC, forwardC, toShooting2C, park_C;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)
