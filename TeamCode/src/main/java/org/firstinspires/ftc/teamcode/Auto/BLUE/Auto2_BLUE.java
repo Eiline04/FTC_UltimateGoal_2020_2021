@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
@@ -25,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
 import java.util.Arrays;
 
@@ -100,7 +99,7 @@ public class Auto2_BLUE extends LinearOpMode {
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(165.0))).build();
 
         launcher.openStopper();
-        launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+        launcher.setVelocity(LauncherWrapper.shootingVelocity - 19.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
         sleep(launchSleepTime);
 
@@ -167,7 +166,7 @@ public class Auto2_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(20.0, 37.0, Math.toRadians(100.0))).build();
 
         park_B = drivetrain.trajectoryBuilder(toZoneB.end(), true)
-                .lineToLinearHeading(new Pose2d(10.0,0.0, Math.toRadians(0.0))).build();
+                .lineToLinearHeading(new Pose2d(10.0,10.0, Math.toRadians(0.0))).build();
     }
 
     Trajectory toZoneB, park_B;

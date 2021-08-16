@@ -16,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
@@ -28,7 +27,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
 @Autonomous(group = "BLUE")
 public class Auto4_BLUE extends LinearOpMode {
@@ -198,8 +197,7 @@ public class Auto4_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(12.0, 48.0, Math.toRadians(180.0))).build();
 
         park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToSplineHeading(new Pose2d(50.0, 16.0, Math.toRadians(90.0)), Math.toRadians(270.0))
-                .splineToSplineHeading(new Pose2d(10.0, 0.0, Math.toRadians(0.0)), Math.toRadians(180.0))
+                .strafeLeft(10.0)
                 .build();
     }
 
@@ -219,7 +217,7 @@ public class Auto4_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(180.0))).build();
 
         park_B = drivetrain.trajectoryBuilder(toZoneB.end(), true)
-                .lineToLinearHeading(new Pose2d(10.0, 0.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(10.0, 50.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneB, collectB, forwardB, toShooting2B, park_B;
@@ -241,7 +239,7 @@ public class Auto4_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-12.0,35.0, Math.toRadians(175.0))).build();
 
         park_C = drivetrain.trajectoryBuilder(toZoneC.end(), false)
-                .lineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(10.0, 50.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneC, collectC, forwardC, toShooting2C, park_C;

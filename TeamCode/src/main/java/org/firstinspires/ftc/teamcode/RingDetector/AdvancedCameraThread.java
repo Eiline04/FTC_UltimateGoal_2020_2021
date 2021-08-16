@@ -14,9 +14,9 @@ import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.lang.reflect.Array;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -86,61 +86,36 @@ public class AdvancedCameraThread implements Runnable {
         this.active = true;
     }
 
-    public static CameraThread.RingDeterminationPipeline.RingPosition getResult(double rectHeight, double rectWidth) {
-        if(rectWidth < 15 || rectWidth > 70) return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
-        if(rectHeight < ONE_HEIGHT)
-            return CameraThread.RingDeterminationPipeline.RingPosition.NONE;
+    public static RingPosition getResult(double rectHeight, double rectWidth) {
+        if (rectWidth < 15 || rectWidth > 70)
+            return RingPosition.NONE;
+        if (rectHeight < ONE_HEIGHT)
+            return RingPosition.NONE;
 
-        if(rectHeight > ONE_HEIGHT && rectHeight < FOUR_HEIGHT)
-            return CameraThread.RingDeterminationPipeline.RingPosition.ONE;
-        return CameraThread.RingDeterminationPipeline.RingPosition.FOUR;
+        if (rectHeight > ONE_HEIGHT && rectHeight < FOUR_HEIGHT)
+            return RingPosition.ONE;
+        return RingPosition.FOUR;
     }
 
     public boolean isKilled() {
         return kill;
     }
 
+
     /**
      * A slightly more advanced Stage-Switching OpenCV pipeline that detects clusters of orange pixels
      * and calculates their height.
      */
     public static class RingPipeline extends OpenCvPipeline {
+
+        public enum RingPosition {
+            FOUR,
+            ONE,
+            NONE
+        }
+
         public static volatile double rectHeight = 0;
         public static volatile double rectWidth = 0;
-
-        enum Stage {
-            BLUR,
-            THRESHOLD,
-            RAW,
-            Cb
-        }
-
-        private Stage stageToRenderToViewport = Stage.RAW;
-        private final Stage[] stages = Stage.values();
-
-        @Override
-        public void onViewportTapped() {
-            /*
-             * Note that this method is invoked from the UI thread
-             * so whatever we do here, we must do quickly.
-             */
-
-            int currentStageNum = stageToRenderToViewport.ordinal();
-
-            int nextStageNum = currentStageNum + 1;
-
-            if (nextStageNum >= stages.length) {
-                nextStageNum = 0;
-            }
-
-            stageToRenderToViewport = stages[nextStageNum];
-        }
-
-        Point p1 = new Point(5, 120);
-        Point p2 = new Point(319, 120);
-        Point p3 = new Point(5, 239);
-        Point p4 = new Point(319, 239);
-        Rect rectCrop = new Rect((int) p1.x, (int) p1.y, (int) (p4.x - p1.x + 1), (int) (p4.y - p1.y + 1));
 
         Mat YCbCr = new Mat();
         Mat medianBlur = new Mat();
@@ -152,15 +127,18 @@ public class AdvancedCameraThread implements Runnable {
         Rect ring = new Rect();
         private List<MatOfPoint> contoursList = new ArrayList<>();
         private List<Mat> splitMat = new ArrayList<>();
+        Scalar scalar = new Scalar(0, 255, 0);
 
         double maxArea = 0, currentArea;
         int i;
 
         @Override
-        public Mat processFrame(Mat input) {
+        public void init(Mat mat) {
 
-            //submat the frame
-            input = input.submat(rectCrop);
+        }
+
+        @Override
+        public Mat processFrame(Mat input) {
 
             //convert to YCbCr
             Imgproc.cvtColor(input, YCbCr, Imgproc.COLOR_RGB2YCrCb);
@@ -191,47 +169,11 @@ public class AdvancedCameraThread implements Runnable {
             }
             rectHeight = ring.height;
             rectWidth = ring.width;
-            Imgproc.rectangle(input, ring, new Scalar(0, 255, 0), 5);
+            Imgproc.rectangle(input, ring, scalar, 5);
 
             contoursList.clear();
             splitMat.clear();
-            newmat.release();
-            m.release();
-
-            switch (stageToRenderToViewport) {
-                case THRESHOLD: {
-                    YCbCr.release();
-                    medianBlur.release();
-                    Cb.release();
-                    CbInv.release();
-                    return thresholdMat;
-                }
-
-                case BLUR: {
-                    YCbCr.release();
-                    Cb.release();
-                    CbInv.release();
-                    thresholdMat.release();
-                    return medianBlur;
-                }
-
-                case Cb: {
-                    YCbCr.release();
-                    medianBlur.release();
-                    Cb.release();
-                    thresholdMat.release();
-                    return CbInv;
-                }
-
-                default: {
-                    YCbCr.release();
-                    medianBlur.release();
-                    Cb.release();
-                    CbInv.release();
-                    thresholdMat.release();
-                    return input;
-                }
-            }
+            return input;
         }
     }
 

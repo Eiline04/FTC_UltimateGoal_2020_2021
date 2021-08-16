@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 
 @Config
 @TeleOp
-@Disabled
 public class RotatePIDTuner extends LinearOpMode {
 
     Hardware robot;
@@ -51,7 +50,7 @@ public class RotatePIDTuner extends LinearOpMode {
                 PIDCoefficients pidCoefficients = new PIDCoefficients(kP, kI, kD);
                 PIDFController newPID = new PIDFController(pidCoefficients);
                 newPID.setInputBounds(0.0, 2.0 * Math.PI);
-                newPID.setOutputBounds(0.0, 1.0); //is this correct?
+                //newPID.setOutputBounds(0.0, 1.0); //is this correct?
                 newPID.setTargetPosition(Math.toRadians(rotateTo_DEG));
 
                 //rotate the specified amount

@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
 import java.util.Arrays;
 
@@ -122,6 +122,9 @@ public class Auto4_RED extends LinearOpMode {
             wobbleWrapper.detachGrip();
             sleep(300);
             wobbleWrapper.closeArm();
+            sleep(1000);
+            drivetrain.followTrajectory(tempForwardA);
+            sleep(8000);
             drivetrain.followTrajectory(park_A);
             sleep(500);
         }
@@ -153,6 +156,8 @@ public class Auto4_RED extends LinearOpMode {
             sleep(300);
             launcher.stop();
 
+            drivetrain.followTrajectory(tempForwardB);
+            sleep(3000);
             drivetrain.followTrajectory(parkB);
         }
 
@@ -192,6 +197,8 @@ public class Auto4_RED extends LinearOpMode {
             sleep(300);
             launcher.stop();
 
+            drivetrain.followTrajectory(tempForwardC);
+            sleep(3000);
             drivetrain.followTrajectory(parkC);
         }
 
@@ -208,11 +215,16 @@ public class Auto4_RED extends LinearOpMode {
                 })
                 .lineToLinearHeading(new Pose2d(12.0, -48.0, Math.toRadians(180.0))).build();
 
-        park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToSplineHeading(new Pose2d(50.0, -25.0, Math.toRadians(270.0)), Math.toRadians(90.0))
-                .splineToSplineHeading(new Pose2d(10.0, 0.0, 0.0), Math.toRadians(180.0)).build();
+        tempForwardA = drivetrain.trajectoryBuilder(toZoneA.end(), true)
+                .back(25.0).build();
+
+        park_A = drivetrain.trajectoryBuilder(tempForwardA.end(), true)
+                .forward(25.0).build();
+                //.strafeTo(new Vector2d(10.0,-10.0)).build();
+                //.splineToSplineHeading(new Pose2d(50.0, -25.0, Math.toRadians(270.0)), Math.toRadians(90.0))
+                //.splineToSplineHeading(new Pose2d(10.0, 0.0, 0.0), Math.toRadians(180.0)).build();
     }
-    Trajectory toZoneA, park_A;
+    Trajectory toZoneA, tempForwardA, park_A;
 
     void buildPathsOne() {
         toZoneB = drivetrain.trajectoryBuilder(toShooting.end(),true)
@@ -227,10 +239,14 @@ public class Auto4_RED extends LinearOpMode {
         toShooting2B = drivetrain.trajectoryBuilder(collectB.end(),true)
                 .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(175.0))).build();
 
-        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
-                .lineToLinearHeading(new Pose2d(15.0,10.0, Math.toRadians(180.0))).build();
+        tempForwardB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
+                .lineToLinearHeading(new Pose2d(-12.0 + 25.0, -35.0, Math.toRadians(180.0))).build();
+
+        parkB = drivetrain.trajectoryBuilder(tempForwardB.end(), true)
+                .forward(25.0).build();
+                //.lineToLinearHeading(new Pose2d(15.0,-35.0, Math.toRadians(180.0))).build();
     }
-    Trajectory toZoneB, collectB, toShooting2B, parkB;
+    Trajectory toZoneB, collectB, toShooting2B, tempForwardB, parkB;
 
     void buildPathsFour() {
         toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), true)
@@ -251,10 +267,14 @@ public class Auto4_RED extends LinearOpMode {
         toShooting2C = drivetrain.trajectoryBuilder(forwardC.end(),true)
                 .lineToLinearHeading(new Pose2d(-12.0, -35.0, Math.toRadians(186.0))).build();
 
-        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
-                .lineToLinearHeading(new Pose2d(15.0, -30.0, Math.toRadians(180.0))).build();
+        tempForwardC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
+                .lineToLinearHeading(new Pose2d(-12.0 + 25.0, -35.0, Math.toRadians(180.0))).build();
+
+        parkC = drivetrain.trajectoryBuilder(tempForwardC.end(), true)
+                .forward(25.0).build();
+                //.lineToLinearHeading(new Pose2d(15.0, -35.0, Math.toRadians(180.0))).build();
     }
-    Trajectory toZoneC, collectC, forwardC, toShooting2C, parkC;
+    Trajectory toZoneC, collectC, forwardC, toShooting2C, tempForwardC,parkC;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)

@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread;
-import org.firstinspires.ftc.teamcode.RingDetector.CameraThread;
 import org.firstinspires.ftc.teamcode.Roadrunner.DriveConstants;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
@@ -27,7 +26,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.Arrays;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
 @Autonomous(group = "BLUE")
 public class Auto1_BLUE extends LinearOpMode {
@@ -47,6 +46,7 @@ public class Auto1_BLUE extends LinearOpMode {
 
     private final int launchSleepTime = 300;
     Trajectory toShooting;
+    Trajectory strafe;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -155,7 +155,7 @@ public class Auto1_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(20.0, 46.0, Math.toRadians(210.0))).build();
 
         park_A = drivetrain.trajectoryBuilder(toZoneA.end(), true)
-                .splineToLinearHeading(new Pose2d(10.0, -10.0, Math.toRadians(180.0)), Math.toRadians(180.0)).build();
+                .splineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0)), Math.toRadians(180.0)).build();
     }
 
     Trajectory toZoneA, park_A;
@@ -165,7 +165,7 @@ public class Auto1_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(37.0, 23.0, Math.toRadians(180.0))).build();
 
         park_B = drivetrain.trajectoryBuilder(toZoneB.end(), false)
-                .strafeTo(new Vector2d(10.0, -10.0)).build();
+                .strafeTo(new Vector2d(10.0, 10.0)).build();
     }
 
     Trajectory toZoneB, park_B;
@@ -175,7 +175,7 @@ public class Auto1_BLUE extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(60.0, 45.0, Math.toRadians(180.0)), Math.toRadians(0.0)).build();
 
         park_C = drivetrain.trajectoryBuilder(toZoneC.end(), true)
-                .strafeTo(new Vector2d(10.0, -10.0)).build();
+                .strafeTo(new Vector2d(10.0, 10.0)).build();
     }
 
     Trajectory toZoneC, park_C;

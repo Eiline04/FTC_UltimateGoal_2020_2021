@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
 import java.util.Arrays;
 
@@ -81,6 +81,7 @@ public class Auto1_RED extends LinearOpMode {
         telemetry.update();
 
         waitForStart();
+        //ElapsedTime timer = new ElapsedTime();
         if (isStopRequested()) return;
 
         double rectHeight = AdvancedCameraThread.RingPipeline.rectHeight;
@@ -160,6 +161,13 @@ public class Auto1_RED extends LinearOpMode {
         drivetrain.updatePoseEstimate();
         PoseStorage.currentPose = drivetrain.getPoseEstimate(); //store pose
         sleep(300);
+
+//        double elapsed = timer.seconds();
+//        if(elapsed < 28) {
+//            telemetry.addLine("Sleeping");
+//            telemetry.update();
+//            sleep((28 - (int)elapsed) * 1000);
+//        }
     }
 
     void buildPathsZero() {

@@ -31,7 +31,7 @@ public class SimpleDriving extends LinearOpMode {
 
     boolean intakeState = false, prevIntakeState = false;
     boolean gripperState = false; //false = detached
-    boolean launcherState = false, prevLauncherState = false;
+    boolean launcherState = false, prevLauncherState = false, tempPowerShots = false;
     boolean atPowerShots = false;
 
     int valueDAS = 0;
@@ -264,6 +264,14 @@ public class SimpleDriving extends LinearOpMode {
     }
 
     void handleLauncher() {
+
+        //temporary
+        if(controller1.rightBumperOnce()) {
+            launcherState = true;
+            prevLauncherState = true;
+            launcher.setVelocity(TeleOpPowerShotVelocity, AngleUnit.DEGREES);
+        }
+
         if (controller1.BOnce() && !gamepad1.start && !gamepad2.start) {
             launcherState = !launcherState;
         }

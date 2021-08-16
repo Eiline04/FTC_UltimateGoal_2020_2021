@@ -25,10 +25,9 @@ import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-import java.util.Arrays;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
-import static org.firstinspires.ftc.teamcode.RingDetector.CameraThread.RingDeterminationPipeline.RingPosition;
+import java.util.Arrays;
 
 @Autonomous(name = "Auto Remote")
 @Disabled
