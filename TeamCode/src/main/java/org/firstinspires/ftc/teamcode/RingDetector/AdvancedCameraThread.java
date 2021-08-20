@@ -14,8 +14,6 @@ import org.openftc.easyopencv.OpenCvCameraException;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +29,9 @@ public class AdvancedCameraThread implements Runnable {
 
     public static double ONE_HEIGHT = 10;
     public static double FOUR_HEIGHT = 25;
+
+    public static volatile double rectHeight = 0;
+    public static volatile double rectWidth = 0;
 
     public enum CAMERA_STATE {
         NULL,
@@ -49,6 +50,7 @@ public class AdvancedCameraThread implements Runnable {
         this.camera = camera;
         kill = false;
         state = CAMERA_STATE.NULL;
+        rectHeight = 0; rectWidth = 0;
     }
 
     @Override
@@ -101,21 +103,17 @@ public class AdvancedCameraThread implements Runnable {
         return kill;
     }
 
+    public enum RingPosition {
+        FOUR,
+        ONE,
+        NONE
+    }
 
     /**
      * A slightly more advanced Stage-Switching OpenCV pipeline that detects clusters of orange pixels
      * and calculates their height.
      */
-    public static class RingPipeline extends OpenCvPipeline {
-
-        public enum RingPosition {
-            FOUR,
-            ONE,
-            NONE
-        }
-
-        public static volatile double rectHeight = 0;
-        public static volatile double rectWidth = 0;
+    public class RingPipeline extends OpenCvPipeline {
 
         Mat YCbCr = new Mat();
         Mat medianBlur = new Mat();
@@ -132,18 +130,18 @@ public class AdvancedCameraThread implements Runnable {
         double maxArea = 0, currentArea;
         int i;
 
-        @Override
-        public void init(Mat mat) {
-
-        }
+        Point p1 = new Point(5, 120);
+        Point p2 = new Point(319, 120);
+        Point p3 = new Point(5, 239);
+        Point p4 = new Point(319, 239);
+        Rect rectCrop = new Rect((int) p1.x, (int) p1.y, (int) (p4.x - p1.x + 1), (int) (p4.y - p1.y + 1));
 
         @Override
         public Mat processFrame(Mat input) {
+            input = input.submat(rectCrop);
 
-            //convert to YCbCr
             Imgproc.cvtColor(input, YCbCr, Imgproc.COLOR_RGB2YCrCb);
 
-            //blur it a bit
             Imgproc.medianBlur(YCbCr, medianBlur, BLUR_KERNEL_SIZE);
 
             //extract Cb channel and invert it
@@ -171,8 +169,16 @@ public class AdvancedCameraThread implements Runnable {
             rectWidth = ring.width;
             Imgproc.rectangle(input, ring, scalar, 5);
 
+            for (MatOfPoint m: contoursList) {
+                m.release();
+            }
             contoursList.clear();
+
+            for (Mat m: splitMat) {
+                m.release();
+            }
             splitMat.clear();
+
             return input;
         }
     }

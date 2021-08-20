@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Auto.PoseStorage;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
@@ -24,6 +23,7 @@ import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShoo
 
 @TeleOp(name = "Enhanced Driving")
 @Disabled
+@Deprecated
 public class EnhancedDriving extends LinearOpMode {
 
     ControllerInput controller1;
@@ -83,13 +83,8 @@ public class EnhancedDriving extends LinearOpMode {
 
         valueDAS = 0;
 
-        Pose2d storedPose = PoseStorage.currentPose;
-        drivetrain.setPoseEstimate(storedPose);
-        if (PoseStorage.currentPose.getX() == 0 && PoseStorage.currentPose.getY() == 0) {
-            telemetry.addLine("Nicio pozitie stocata");
-            telemetry.update();
-            drivetrain.setPoseEstimate(startPose);
-        }
+        //removed PoseStorage
+
         robot.enableBulkDataPolling();
 
         //set PIDF Coeffs for launcher
@@ -186,7 +181,6 @@ public class EnhancedDriving extends LinearOpMode {
             prevLauncherState = launcherState;
             prevWingState = wingState;
         }
-        PoseStorage.currentPose = new Pose2d(0, 0, 0); //clear pose storage
     }
 
     enum Mode {

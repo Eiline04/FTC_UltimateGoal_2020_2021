@@ -58,8 +58,6 @@ public class SimpleDriving extends LinearOpMode {
         wobbleWrapper.attachGrip();
         gripperState = true;
 
-        valueDAS = 0;
-
         robot.enableBulkDataPolling();
 
         waitForStart();
@@ -133,10 +131,6 @@ public class SimpleDriving extends LinearOpMode {
         //------------------------LAUNCHER & WINGS--------------------------
         handleLauncher();
 
-        if (controller2.AOnce() && !gamepad1.start && !gamepad2.start) {
-            launcher.setPower(0);
-        }
-
         //--------------------------LAUNCH SERVO-----------------------------
         if (controller1.YOnce()) {
             if (launcher.isClosed) launcher.openStopper(); //wtf?
@@ -171,96 +165,6 @@ public class SimpleDriving extends LinearOpMode {
             sleep(300);
             wobbleWrapper.closeArm();
         }
-
-        //--------------------------DAS -----------------------------
-        if (controller2.leftBumperOnce()) {
-
-            switch (valueDAS) {
-                case 0:
-                    valueDAS = 3;
-                    positionDAS.leftDAS();
-                    break;
-                case 3:
-                    valueDAS = 2;
-                    positionDAS.middleDAS();
-                    break;
-                case 2:
-                    valueDAS = 1;
-                    positionDAS.rightDAS();
-                    break;
-                default:
-                    valueDAS = 0;
-                    positionDAS.startDAS();
-            }
-        }
-
-        if (controller2.rightBumperOnce()) {
-
-            switch (valueDAS) {
-
-                case 1:
-                    valueDAS = 2;
-                    positionDAS.middleDAS();
-                    break;
-                case 2:
-                    valueDAS = 3;
-                    positionDAS.leftDAS();
-                    break;
-                default:
-                    valueDAS = 0;
-                    positionDAS.startDAS();
-            }
-        }
-
-        if (controller2.dpadDownOnce()) {
-            positionDAS.startDAS();
-        }
-
-
-        //---------------CONTROLLER2 B PRESS DAS AUTO----------------
-        if (controller2.BOnce() && !gamepad2.start) {
-            robot.backLeftWheel.setPower(0.0);
-            robot.backRightWheel.setPower(0.0);
-            robot.frontLeftWheel.setPower(0.0);
-            robot.frontRightWheel.setPower(0.0);
-
-            launcher.setVelocity(TeleOpPowerShotVelocity, AngleUnit.DEGREES);
-            sleep(200);
-
-            //FIRST
-            positionDAS.leftDAS();
-            sleep(200);
-            launcher.launchOneRing();
-            sleep(200);
-
-            //SECOND
-            positionDAS.middleDAS();
-            sleep(200);
-            launcher.launchOneRing();
-            launcher.setVelocity(TeleOpShootingVelocity, AngleUnit.DEGREES);
-            sleep(200);
-
-            //THIRD
-            positionDAS.rightDAS();
-            sleep(200);
-            launcher.launchOneRing();
-            sleep(200);
-            launcher.setPower(0);
-            positionDAS.startDAS();
-        }
-
-        //-------------DAS & TRIGGER-------------
-
-        if (controller2.right_trigger > 0.05 && controller2.left_trigger < 0.05) {
-            positionDAS.toRightDAS();
-            //positionDAS.changePos = Range.clip(positionDAS.changePos,0.5,0.8);
-        }
-
-        if (controller2.left_trigger > 0.05 && controller2.right_trigger < 0.05) {
-            positionDAS.toLeftDAS();
-            //positionDAS.changePos = Range.clip(positionDAS.changePos,0.5,0.8);
-        }
-
     }
 
     void handleLauncher() {

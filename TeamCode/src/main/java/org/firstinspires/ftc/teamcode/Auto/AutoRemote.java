@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
-import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPipeline.RingPosition;
+import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPosition;
 
 import java.util.Arrays;
 
@@ -54,7 +54,6 @@ public class AutoRemote extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        PoseStorage.currentPose = null; //clear pose transfer
         robot = new Hardware();
         robot.init(hardwareMap);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
@@ -251,7 +250,6 @@ public class AutoRemote extends LinearOpMode {
             drivetrain.followTrajectory(toParkC);
         }
         drivetrain.updatePoseEstimate();
-        PoseStorage.currentPose = drivetrain.getPoseEstimate(); //store pose
         wobbleWrapper.attachGrip();
         sleep(100);
     }
