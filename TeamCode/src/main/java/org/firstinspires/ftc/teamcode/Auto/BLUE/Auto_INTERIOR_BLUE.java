@@ -102,6 +102,7 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity - 19.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
+        Hardware.intakeRelease.setPosition(0.667);
         sleep(launchSleepTime);
 
         launcher.launchOneRing();

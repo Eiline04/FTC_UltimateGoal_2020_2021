@@ -76,7 +76,7 @@ public class LauncherPIDFTuner extends LinearOpMode {
                 launcherWrapper.setVelocity(targetVelocity, AngleUnit.DEGREES);
             }
             if (controller.leftBumperOnce()) {
-                launcherWrapper.setVelocity(0, AngleUnit.DEGREES);
+                launcherWrapper.stop();
             }
 
             if (controller.YOnce()) {

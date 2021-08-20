@@ -5,10 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Miscellaneous.BulkReadThread;
 import org.firstinspires.ftc.teamcode.Miscellaneous.GlobalBulkRead;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.ExpansionHubServo;
+
+import java.util.concurrent.atomic.LongAccumulator;
 
 import static java.lang.Thread.sleep;
 
@@ -49,16 +52,19 @@ public class LauncherWrapper {
     }
 
     public void setVelocity(double angVel, AngleUnit angleUnit) {
+        if(angVel == 0.0) { this.stop(); return; }
         launcherTop.setVelocity(angVel,angleUnit);
         launcherBottom.setVelocity(angVel,angleUnit);
     }
 
     public void setPower(float power) {
+        if(power == 0.0) { this.stop(); return; }
         launcherTop.setPower(power);
         launcherBottom.setPower(power);
     }
 
     public void stop() {
+        Hardware.intakeRelease.setPosition(0.33);
         launcherTop.setPower(0);
         launcherBottom.setPower(0);
     }

@@ -37,6 +37,8 @@ public class Hardware {
 
     public ExpansionHubServo servoDAS = null;
 
+    public static ExpansionHubServo intakeRelease = null;
+
     public void init(HardwareMap hwMap) {
         GlobalBulkRead.resetBulkData();
 
@@ -66,6 +68,7 @@ public class Hardware {
         //-----------------------------Intake------------------------------------------
         staticIntake = hwMap.get(ExpansionHubMotor.class, "staticIntake");
         mobileIntake = hwMap.get(ExpansionHubMotor.class, "mobileIntake");
+        intakeRelease = hwMap.get(ExpansionHubServo.class, "intakeRelease");
 
         //-----------------------------Launcher------------------------------------------
         launcherTop = hwMap.get(ExpansionHubMotor.class, "launcherTop");

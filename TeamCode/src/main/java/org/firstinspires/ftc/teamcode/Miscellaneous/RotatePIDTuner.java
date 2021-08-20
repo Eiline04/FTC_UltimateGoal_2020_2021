@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 
 @Config
 @TeleOp
+@Disabled
 public class RotatePIDTuner extends LinearOpMode {
 
     Hardware robot;

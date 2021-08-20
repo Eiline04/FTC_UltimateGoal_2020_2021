@@ -174,6 +174,7 @@ public class SimpleDriving extends LinearOpMode {
             launcherState = true;
             prevLauncherState = true;
             launcher.setVelocity(TeleOpPowerShotVelocity, AngleUnit.DEGREES);
+            Hardware.intakeRelease.setPosition(0.667);
         }
 
         if (controller1.BOnce() && !gamepad1.start && !gamepad2.start) {
@@ -182,6 +183,7 @@ public class SimpleDriving extends LinearOpMode {
 
         if (launcherState && !prevLauncherState) {
             launcher.setVelocity(TeleOpShootingVelocity, AngleUnit.DEGREES);
+            Hardware.intakeRelease.setPosition(0.667);
         }
 
         if (!launcherState && prevLauncherState) {

@@ -100,6 +100,7 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
+        Hardware.intakeRelease.setPosition(0.667);
         sleep(300);
 
         launcher.launchOneRing();

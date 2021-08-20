@@ -42,26 +42,48 @@ public class TestTeleOp extends LinearOpMode {
         controller2 = new ControllerInput(gamepad2);
 
         dasPositions = new DasPositions(robot.servoDAS);
-        dasPositions.setPositionDAS(0.7);
-
-        waitForStart();
+        dasPositions.startDAS();
 
         launcher.openStopper();
+        waitForStart();
+
         while (opModeIsActive()) {
             controller1.update();
-
             if(controller1.AOnce()) {
-                launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+                Hardware.intakeRelease.setPosition(0.33);
             }
-
             if(controller1.BOnce()) {
-                launcher.stop();
-            }
-
-            if(controller1.YOnce()) {
-                launcher.launchOneRing();
-                sleep(300);
+                Hardware.intakeRelease.setPosition(0.0);
             }
         }
+
+//        launcher.setVelocity(LauncherWrapper.shootingVelocity - 15.0, AngleUnit.DEGREES);
+//        sleep(3000);
+//        launcher.launchOneRing();
+//        sleep(800);
+//        launcher.launchOneRing();
+//        sleep(800);
+//        launcher.launchOneRing();
+//        sleep(1000);
     }
+
+
+//        launcher.openStopper();
+//        while (opModeIsActive()) {
+//            controller1.update();
+//
+//            if(controller1.AOnce()) {
+//                launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
+//            }
+//
+//            if(controller1.BOnce()) {
+//                launcher.stop();
+//            }
+//
+//            if(controller1.YOnce()) {
+//                launcher.launchOneRing();
+//                sleep(300);
+//            }
+//        }
+//    }
 }

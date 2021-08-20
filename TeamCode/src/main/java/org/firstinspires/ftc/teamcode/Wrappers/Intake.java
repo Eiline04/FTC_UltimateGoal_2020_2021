@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.openftc.revextensions2.ExpansionHubMotor;
+import org.openftc.revextensions2.ExpansionHubServo;
 
 /**
  *  Simple wrapper for the ring intake
@@ -23,6 +24,10 @@ public class Intake {
         this.mopStanga = mopStanga;
         this.mopDreapta = mopDreapta;
         reverse = false;
+    }
+
+    public void releaseIntake() {
+        Hardware.intakeRelease.setPosition(0.33);
     }
 
     public void startIntake() {
