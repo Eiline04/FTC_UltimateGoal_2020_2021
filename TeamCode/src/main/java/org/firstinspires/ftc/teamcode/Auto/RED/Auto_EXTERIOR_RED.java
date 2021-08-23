@@ -100,7 +100,6 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
-        Hardware.intakeRelease.setPosition(0.667);
         sleep(300);
 
         launcher.launchOneRing();
@@ -118,6 +117,7 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
             buildPathsZero();
 
             drivetrain.followTrajectory(toZoneA);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);
@@ -135,6 +135,7 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
             buildPathsOne();
 
             drivetrain.followTrajectory(toZoneB);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);
@@ -168,6 +169,7 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
 
             dasPositions.startDAS();
             drivetrain.followTrajectory(toZoneC);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);

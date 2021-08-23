@@ -132,15 +132,17 @@ public class SimpleDriving extends LinearOpMode {
         handleLauncher();
 
         //--------------------------LAUNCH SERVO-----------------------------
-        if (controller1.YOnce()) {
+        if (controller1.dpadUpOnce()) {
             if (launcher.isClosed) launcher.openStopper(); //wtf?
             if (!atPowerShots) {
                 ringsToBeShot = 3;
             }
         }
-        if (controller1.dpadUpOnce()) {
+        if (controller1.YOnce()) {
             launcher.openStopper();
+            sleep(50);
             launcher.launchOneRing();
+            launcher.closeStopper();
         }
 
         //--------------------------ARM SERVO-----------------------------
@@ -168,7 +170,6 @@ public class SimpleDriving extends LinearOpMode {
     }
 
     void handleLauncher() {
-
         //temporary
         if(controller1.rightBumperOnce()) {
             launcherState = true;

@@ -98,12 +98,11 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
 
         toShooting = drivetrain.trajectoryBuilder(startPose, true)
                 .strafeTo(new Vector2d(-40.0, -15.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0))
-                .splineToConstantHeading(new Vector2d(-1.0, -9.67 - 1.0), Math.toRadians(0.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
+                .splineToConstantHeading(new Vector2d(-1.0, -9.67), Math.toRadians(0.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
 
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity - 60.0, AngleUnit.DEGREES);
         drivetrain.followTrajectory(toShooting);
-        Hardware.intakeRelease.setPosition(0.667);
         sleep(300);
 
         launcher.launchOneRing(); //power shots go brr
@@ -126,6 +125,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
             dasPositions.startDAS();
 
             drivetrain.followTrajectory(toZoneA);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);
@@ -161,6 +161,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
             dasPositions.startDAS();
 
             drivetrain.followTrajectory(toZoneB);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);
@@ -194,6 +195,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
             dasPositions.startDAS();
 
             drivetrain.followTrajectory(toZoneC);
+            Hardware.intakeRelease.setPosition(0.667);
             sleep(100);
             wobbleWrapper.detachGrip();
             sleep(300);
@@ -237,7 +239,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(55.0, -55.0, Math.toRadians(70.0))).build();
 
         collectA = drivetrain.trajectoryBuilder(toBounceBackA.end(), false)
-                .splineToConstantHeading(new Vector2d(55.0, -5.0 + 7.0), Math.toRadians(70.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
+                .lineToConstantHeading(new Vector2d(55.0, -5.0 + 7.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
 
         toShooting2A = drivetrain.trajectoryBuilder(collectA.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(163.0))).build();
