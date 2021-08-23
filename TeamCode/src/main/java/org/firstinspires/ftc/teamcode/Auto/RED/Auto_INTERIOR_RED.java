@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 @Autonomous(group = "RED")
 public class Auto_INTERIOR_RED extends LinearOpMode {
-    public static volatile RingPosition ringPosition;
+    public RingPosition ringPosition;
     OpenCvCamera webcam;
     AdvancedCameraThread cameraThread;
 
@@ -98,7 +98,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
 
         toShooting = drivetrain.trajectoryBuilder(startPose, true)
                 .strafeTo(new Vector2d(-40.0, -15.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0))
-                .splineToConstantHeading(new Vector2d(-1.0, -9.67), Math.toRadians(0.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
+                .splineToConstantHeading(new Vector2d(-1.0 - 2.0, -9.67), Math.toRadians(0.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
 
         launcher.openStopper();
         launcher.setVelocity(LauncherWrapper.shootingVelocity - 60.0, AngleUnit.DEGREES);
@@ -201,6 +201,8 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
             sleep(300);
             wobbleWrapper.closeArm();
 
+            drivetrain.followTrajectory(strafeAwayC);
+
             drivetrain.followTrajectory(toBounceBackC);
             intake.startIntake();
             sleep(100);
@@ -255,7 +257,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(45.0, -30.0, Math.toRadians(100.0))).build();
+                .lineToLinearHeading(new Pose2d(50.0, -30.0, Math.toRadians(100.0))).build();
 
         toBounceBackB = drivetrain.trajectoryBuilder(toZoneB.end(), true)
                 .lineToLinearHeading(new Pose2d(55.0, -55.0, Math.toRadians(70.0))).build();
@@ -278,10 +280,13 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(45.0, -50.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(52.0, -50.0, Math.toRadians(180.0))).build();
 
-        toBounceBackC = drivetrain.trajectoryBuilder(toZoneC.end(), true)
-                .lineToLinearHeading(new Pose2d(55.0, -55.0, Math.toRadians(70.0))).build();
+        strafeAwayC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
+                .strafeRight(10.0, setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
+
+        toBounceBackC = drivetrain.trajectoryBuilder(strafeAwayC.end(), true)
+                .lineToLinearHeading(new Pose2d(55.0, -45.0, Math.toRadians(70.0))).build();
 
         collectC = drivetrain.trajectoryBuilder(toBounceBackC.end(), false)
                 .splineToConstantHeading(new Vector2d(55.0, -5.0 + 7.0), Math.toRadians(70.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
@@ -293,7 +298,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(10.0,-10.0, Math.toRadians(180.0))).build();
     }
 
-    Trajectory toZoneC, toBounceBackC, collectC, toShooting2C, parkC;
+    Trajectory toZoneC, strafeAwayC, toBounceBackC, collectC, toShooting2C, parkC;
 
     MinVelocityConstraint setMaxVelocity(double maxVel) {
         return (new MinVelocityConstraint(Arrays.asList(new AngularVelocityConstraint(DriveConstants.MAX_ANG_VEL)

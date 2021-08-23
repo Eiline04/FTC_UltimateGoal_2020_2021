@@ -30,7 +30,7 @@ import java.util.Arrays;
 
 @Autonomous(group = "RED")
 public class Auto_EXTERIOR_RED extends LinearOpMode {
-    public static volatile RingPosition ringPosition;
+    public RingPosition ringPosition;
     OpenCvCamera webcam;
     AdvancedCameraThread cameraThread;
 
@@ -125,7 +125,7 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
             sleep(400);
             drivetrain.followTrajectory(toWait);
 
-            sleep(10000); //wait cause we have nothing better to do
+            sleep(13000); //wait cause we have nothing better to do
 
             drivetrain.followTrajectory(park_A);
         }

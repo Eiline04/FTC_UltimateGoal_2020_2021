@@ -31,7 +31,7 @@ import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.R
 
 @Autonomous(group = "BLUE")
 public class Auto_EXTERIOR_BLUE extends LinearOpMode {
-    public static volatile RingPosition ringPosition;
+    public RingPosition ringPosition;
     OpenCvCamera webcam;
     AdvancedCameraThread cameraThread;
 
@@ -96,7 +96,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
         drivetrain = new MecanumDrive(hardwareMap);
         drivetrain.setPoseEstimate(startPose);
 
-        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(166.0)),
+        toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, 55.0, Math.toRadians(164.0)),
                 setMaxVelocity(25.0), new ProfileAccelerationConstraint(25.0)).build();
 
         launcher.openStopper();
@@ -124,7 +124,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
             sleep(500);
             drivetrain.followTrajectory(toWait);
 
-            sleep(10000); //wait cause we have nothing better to do
+            sleep(13000); //wait cause we have nothing better to do
 
             drivetrain.followTrajectory(park_A);
         }
@@ -237,7 +237,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
                 .lineToConstantHeading(new Vector2d(-35.0, 35.0), setMaxVelocity(25.0), new ProfileAccelerationConstraint(20.0)).build();
 
         toShooting2B = drivetrain.trajectoryBuilder(forwardB.end(), true)
-                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(177.0)), setMaxVelocity(25.0), new ProfileAccelerationConstraint(25.0)).build();
+                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(175.0)), setMaxVelocity(25.0), new ProfileAccelerationConstraint(25.0)).build();
 
         parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
                 .lineToLinearHeading(new Pose2d(10.0, 55.0, Math.toRadians(180.0)), setMaxVelocity(35.0), new ProfileAccelerationConstraint(30.0)).build();
@@ -250,10 +250,10 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(50.0, 55.0, Math.toRadians(145.0))).build();
 
         collectC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
-                .lineToLinearHeading(new Pose2d(-5.0, 35.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(-4.0, 35.0, Math.toRadians(180.0))).build();
 
         forwardC = drivetrain.trajectoryBuilder(collectC.end(), false)
-                .forward(12.0, setMaxVelocity(25.0), new ProfileAccelerationConstraint(25.0)).build();
+                .forward(13.0, setMaxVelocity(35.0), new ProfileAccelerationConstraint(35.0)).build();
 
         backwardC = drivetrain.trajectoryBuilder(forwardC.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(171.0)), setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
@@ -264,7 +264,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
         //.forward(30.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
 
         toShooting2C = drivetrain.trajectoryBuilder(forwardAgainC.end(), true)
-                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(177.0))).build();
+                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(175.0))).build();
 
         parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
                 .lineToLinearHeading(new Pose2d(10.0, 55.0, Math.toRadians(180.0))).build();

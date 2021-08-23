@@ -24,8 +24,8 @@ import java.util.List;
 @Config
 public class AdvancedCameraThread implements Runnable {
 
-    public static int THRESHOLD = 110;
-    public static int BLUR_KERNEL_SIZE = 9;
+    public static int THRESHOLD = 113; //110
+    public static int BLUR_KERNEL_SIZE =  9;
 
     public static double ONE_HEIGHT = 10;
     public static double FOUR_HEIGHT = 25;
