@@ -3,13 +3,22 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Miscellaneous.ControllerInput;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 
+import java.io.File;
+
 @TeleOp(name = "Localization Test", group = "Misc")
 public class LocalizationTest extends LinearOpMode {
+
+    public boolean writeToFile = false;
+
+    private File coordinates = AppUtil.getInstance().getSettingsFile("coordinates.txt");
+    private StringBuilder stringBuilder;
 
     @Override
     public void runOpMode() {
@@ -25,6 +34,7 @@ public class LocalizationTest extends LinearOpMode {
         
         controller1 = new ControllerInput(gamepad1);
 
+        stringBuilder = new StringBuilder();
         waitForStart();
 
         while (opModeIsActive()) {
@@ -34,10 +44,17 @@ public class LocalizationTest extends LinearOpMode {
             drive.update();
 
             Pose2d poseEstimate = drive.getPoseEstimate();
+
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
             telemetry.addData("heading", poseEstimate.getHeading());
             telemetry.update();
+
+            stringBuilder.append(poseEstimate.getX()).append(" ").append(poseEstimate.getY()).append("\n");
+        }
+
+        if(writeToFile) {
+            ReadWriteFile.writeFile(coordinates, stringBuilder.toString());
         }
     }
 }

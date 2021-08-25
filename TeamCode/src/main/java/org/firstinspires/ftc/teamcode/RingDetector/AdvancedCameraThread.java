@@ -24,7 +24,7 @@ import java.util.List;
 @Config
 public class AdvancedCameraThread implements Runnable {
 
-    public static int THRESHOLD = 113; //110
+    public static int THRESHOLD = 110;
     public static int BLUR_KERNEL_SIZE =  9;
 
     public static double ONE_HEIGHT = 10;
@@ -55,7 +55,7 @@ public class AdvancedCameraThread implements Runnable {
 
     @Override
     public void run() {
-        while (!kill) {
+        while (!kill && !Thread.currentThread().isInterrupted()) {
             if (active) {
                 if (state == CAMERA_STATE.INIT) {
                     try {
@@ -138,10 +138,14 @@ public class AdvancedCameraThread implements Runnable {
 
         @Override
         public Mat processFrame(Mat input) {
+
+            //Crop the image to fit
             input = input.submat(rectCrop);
 
+            //Convert to YCbCr
             Imgproc.cvtColor(input, YCbCr, Imgproc.COLOR_RGB2YCrCb);
 
+            //Apply the median blur effect
             Imgproc.medianBlur(YCbCr, medianBlur, BLUR_KERNEL_SIZE);
 
             //extract Cb channel and invert it
@@ -149,7 +153,10 @@ public class AdvancedCameraThread implements Runnable {
             Cb = splitMat.get(1);
             Core.bitwise_not(Cb, CbInv);
 
+            //Threshold the image to isolat orange
             Imgproc.threshold(CbInv, thresholdMat, THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
+
+            //Find the biggest white contour and place a rectangle on it
             Imgproc.findContours(thresholdMat, contoursList, newmat, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
             //find the biggest orange spot

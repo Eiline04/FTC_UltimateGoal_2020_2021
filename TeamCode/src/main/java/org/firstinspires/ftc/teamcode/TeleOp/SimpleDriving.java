@@ -4,9 +4,12 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Miscellaneous.ControllerInput;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
@@ -14,6 +17,9 @@ import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
+
+import java.io.File;
+import java.text.DecimalFormat;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpPowerShotVelocity;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
@@ -34,12 +40,6 @@ public class SimpleDriving extends LinearOpMode {
     boolean launcherState = false, prevLauncherState = false, tempPowerShots = false;
     boolean atPowerShots = false;
 
-    int valueDAS = 0;
-    /*0 --> start position
-     * 3 --> right power shot
-     * 2 --> middle power shot
-     * 1 --> left power shot*/
-
     boolean wingState = true, prevWingState = true; //false = down/open ; true = up/closed
 
     double leftStickY, leftStickX, rightStickX, eps = 0.01, minPower = 0.2;
@@ -47,6 +47,8 @@ public class SimpleDriving extends LinearOpMode {
     int ringsToBeShot = 0;
 
     private final int launchSleepTime = 250;
+
+    private ElapsedTime flapTimer;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -60,10 +62,14 @@ public class SimpleDriving extends LinearOpMode {
 
         robot.enableBulkDataPolling();
 
+        flapTimer = new ElapsedTime();
+
         waitForStart();
+        flapTimer.reset();
 
         while (opModeIsActive()) {
             drivetrain.update();
+
             controller1.update();
             controller2.update();
 
@@ -76,7 +82,6 @@ public class SimpleDriving extends LinearOpMode {
 
                 if (ringsToBeShot == 0) {
                     launcher.closeStopper();
-                    sleep(50);
                 }
                 continue;
             }
@@ -132,17 +137,24 @@ public class SimpleDriving extends LinearOpMode {
         handleLauncher();
 
         //--------------------------LAUNCH SERVO-----------------------------
-        if (controller1.dpadUpOnce()) {
-            if (launcher.isClosed) launcher.openStopper(); //wtf?
+        if (controller1.dpadUpOnce() && launcher.isPoweredUp) {
+            if (launcher.isClosed) {
+                launcher.openStopper();
+                sleep(50);
+                flapTimer.reset();
+            }
             if (!atPowerShots) {
+                flapTimer.reset();
                 ringsToBeShot = 3;
             }
         }
-        if (controller1.YOnce()) {
-            launcher.openStopper();
-            sleep(50);
+        if (controller1.YOnce() && launcher.isPoweredUp) {
+            if(launcher.isClosed) {
+                launcher.openStopper();
+                sleep(50);
+            }
             launcher.launchOneRing();
-            launcher.closeStopper();
+            flapTimer.reset();
         }
 
         //--------------------------ARM SERVO-----------------------------
@@ -170,7 +182,13 @@ public class SimpleDriving extends LinearOpMode {
     }
 
     void handleLauncher() {
-        //temporary
+
+        if(flapTimer.seconds() > 3.0 && !launcher.isClosed) {
+            launcher.closeStopper();
+            flapTimer.reset();
+        }
+
+        //temporary but apparently not
         if(controller1.rightBumperOnce()) {
             launcherState = true;
             prevLauncherState = true;

@@ -12,7 +12,7 @@ public class BulkReadThread implements Runnable{
     @Override
     public void run() {
         kill = false;
-        while (!kill) {
+        while (!kill && !Thread.currentThread().isInterrupted()) {
             GlobalBulkRead.updateBulkData();
         }
         kill = true;

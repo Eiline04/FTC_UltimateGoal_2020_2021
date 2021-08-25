@@ -37,6 +37,7 @@ public class LauncherWrapper {
     private double f = 0;
 
     public boolean isClosed;
+    public boolean isPoweredUp = false;
 
     public LauncherWrapper(ExpansionHubMotor l_T, ExpansionHubMotor l_B, ExpansionHubServo l_S, ExpansionHubServo ringStopper) {
         this.launcherTop = l_T;
@@ -53,17 +54,20 @@ public class LauncherWrapper {
 
     public void setVelocity(double angVel, AngleUnit angleUnit) {
         if(angVel == 0.0) { this.stop(); return; }
+        isPoweredUp = true;
         launcherTop.setVelocity(angVel,angleUnit);
         launcherBottom.setVelocity(angVel,angleUnit);
     }
 
     public void setPower(float power) {
         if(power == 0.0) { this.stop(); return; }
+        isPoweredUp = true;
         launcherTop.setPower(power);
         launcherBottom.setPower(power);
     }
 
     public void stop() {
+        isPoweredUp = false;
         Hardware.intakeRelease.setPosition(0.33);
         launcherTop.setPower(0);
         launcherBottom.setPower(0);
@@ -98,13 +102,10 @@ public class LauncherWrapper {
     }
 
     public void launchOneRing() {
+        if(Thread.currentThread().isInterrupted()) return;
+
         if(isClosed) {
             openStopper();
-            try {
-                sleep(50);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
         setServoPosition(0.5f);
         try {

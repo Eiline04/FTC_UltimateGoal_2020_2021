@@ -29,7 +29,7 @@ import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.R
 import java.util.Arrays;
 
 @Autonomous(group = "RED")
-public class Auto_EXTERIOR_RED extends LinearOpMode {
+public class Auto_EXTERIOR_RED extends LinearOpMode{
     public RingPosition ringPosition;
     OpenCvCamera webcam;
     AdvancedCameraThread cameraThread;
@@ -76,6 +76,9 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
         dasPositions = new DasPositions(robot.servoDAS);
         dasPositions.startDAS();
 
+        drivetrain = new MecanumDrive(hardwareMap);
+        drivetrain.setPoseEstimate(startPose);
+
         telemetry.addLine("Ready!");
         telemetry.update();
 
@@ -90,9 +93,6 @@ public class Auto_EXTERIOR_RED extends LinearOpMode {
         telemetry.update();
 
         cameraThread.setState(AdvancedCameraThread.CAMERA_STATE.KILL);
-
-        drivetrain = new MecanumDrive(hardwareMap);
-        drivetrain.setPoseEstimate(startPose);
 
         toShooting = drivetrain.trajectoryBuilder(startPose, true).lineToLinearHeading(new Pose2d(-12.0, -55.0, Math.toRadians(186.0)),
                 setMaxVelocity(25.0), new ProfileAccelerationConstraint(25.0)).build();

@@ -111,6 +111,8 @@ public class Hardware {
 
         launcherTop.setDirection(DcMotorEx.Direction.FORWARD);
         launcherBottom.setDirection(DcMotorEx.Direction.FORWARD);
+
+        GlobalBulkRead.resetBulkData();
     }
 
     public void enableBulkDataPolling() {
