@@ -256,7 +256,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
                 .forward(13.0, setMaxVelocity(35.0), new ProfileAccelerationConstraint(35.0)).build();
 
         backwardC = drivetrain.trajectoryBuilder(forwardC.end(), true)
-                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(171.0)), setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
+                .lineToLinearHeading(new Pose2d(-12.0, 35.0, Math.toRadians(175.0)), setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
         //.back(5.0, setMaxVelocity(15.0), new ProfileAccelerationConstraint(15.0)).build();
 
         forwardAgainC = drivetrain.trajectoryBuilder(backwardC.end(), false)
