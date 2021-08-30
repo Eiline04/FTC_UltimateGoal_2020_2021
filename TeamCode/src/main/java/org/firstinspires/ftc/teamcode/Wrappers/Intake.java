@@ -4,25 +4,24 @@ import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.openftc.revextensions2.ExpansionHubMotor;
-import org.openftc.revextensions2.ExpansionHubServo;
 
 /**
- *  Simple wrapper for the ring intake
+ * Simple wrapper for the ring intake and auxiliary mechanisms
  */
 
 public class Intake {
 
     public ExpansionHubMotor mobileIntake;
     public ExpansionHubMotor staticIntake;
-    public CRServo mopStanga;
-    public CRServo mopDreapta;
+    public CRServo leftOmni;
+    public CRServo rightOmni;
     private boolean reverse;
 
-    public Intake(ExpansionHubMotor sI, ExpansionHubMotor mI, CRServo mopStanga, CRServo mopDreapta) {
+    public Intake(ExpansionHubMotor sI, ExpansionHubMotor mI, CRServo leftOmni, CRServo rightOmni) {
         this.mobileIntake = mI;
         this.staticIntake = sI;
-        this.mopStanga = mopStanga;
-        this.mopDreapta = mopDreapta;
+        this.leftOmni = leftOmni;
+        this.rightOmni = rightOmni;
         reverse = false;
     }
 
@@ -32,16 +31,16 @@ public class Intake {
 
     public void startIntake() {
         if (reverse) {
-            mopStanga.setPower(1);
-            mopDreapta.setPower(1);
+            leftOmni.setPower(1);
+            rightOmni.setPower(1);
 
             mobileIntake.setPower(-1);
             staticIntake.setPower(-1);
 
 
         } else {
-            mopStanga.setPower(-1);
-            mopDreapta.setPower(-1);
+            leftOmni.setPower(-1);
+            rightOmni.setPower(-1);
 
             mobileIntake.setPower(1);
             staticIntake.setPower(1);
@@ -53,8 +52,8 @@ public class Intake {
         mobileIntake.setPower(0);
         staticIntake.setPower(0);
 
-        mopStanga.setPower(0);
-        mopDreapta.setPower(0);
+        leftOmni.setPower(0);
+        rightOmni.setPower(0);
     }
 
     public void reverseIntake() {

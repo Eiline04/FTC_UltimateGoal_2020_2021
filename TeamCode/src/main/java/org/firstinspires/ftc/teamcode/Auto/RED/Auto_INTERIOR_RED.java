@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -22,7 +21,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
-import org.opencv.core.Mat;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -57,7 +55,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
         launcher.closeStopper();
         launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
-        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
+        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.leftOmni, robot.rightOmni);
 
         initWebcam();
         sleep(1000);
@@ -105,7 +103,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
         drivetrain.followTrajectory(toShooting);
         sleep(300);
 
-        launcher.launchOneRing(); //power shots go brr
+        launcher.launchOneRing();
         sleep(300);
         dasPositions.setPositionDAS(0.82);
         sleep(800);
@@ -246,8 +244,8 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
         toShooting2A = drivetrain.trajectoryBuilder(collectA.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(163.0))).build();
 
-        parkA = drivetrain.trajectoryBuilder(toShooting2A.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,-10.0, Math.toRadians(180.0))).build();
+        parkA = drivetrain.trajectoryBuilder(toShooting2A.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, -10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneA, toBounceBackA, collectA, toShooting2A, parkA;
@@ -268,8 +266,8 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
         toShooting2B = drivetrain.trajectoryBuilder(collectB.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(163.0))).build();
 
-        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,-10.0, Math.toRadians(180.0))).build();
+        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, -10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneB, toBounceBackB, collectB, toShooting2B, parkB;
@@ -280,7 +278,7 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
                 .addTemporalMarker(0.50, 0.0, () -> {
                     wobbleWrapper.openArm();
                 })
-                .lineToLinearHeading(new Pose2d(52.0, -50.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(55.0, -50.0, Math.toRadians(180.0))).build();
 
         strafeAwayC = drivetrain.trajectoryBuilder(toZoneC.end(), false)
                 .strafeRight(10.0, setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
@@ -294,8 +292,8 @@ public class Auto_INTERIOR_RED extends LinearOpMode {
         toShooting2C = drivetrain.trajectoryBuilder(collectC.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, -14.0, Math.toRadians(163.0))).build();
 
-        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,-10.0, Math.toRadians(180.0))).build();
+        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, -10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneC, strafeAwayC, toBounceBackC, collectC, toShooting2C, parkC;

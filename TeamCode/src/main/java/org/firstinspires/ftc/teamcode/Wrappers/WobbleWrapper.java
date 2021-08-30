@@ -22,7 +22,7 @@ public class WobbleWrapper {
     }
 
     public void attachGrip() {
-        gripper.setPosition(0.40);
+        gripper.setPosition(0.30);
     }
 
     public void detachGrip() {
@@ -38,7 +38,7 @@ public class WobbleWrapper {
     }
 
     public void openArm() {
-        arm.setPosition(0.9);
+        arm.setPosition(1.0);
     }
 
 }

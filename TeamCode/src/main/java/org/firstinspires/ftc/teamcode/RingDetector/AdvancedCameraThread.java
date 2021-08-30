@@ -18,14 +18,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Thread that handles the webcam init and streaming for RingPipeline
+ * Thread that handles the webcam init and streaming for RingPipeline.
  */
 
 @Config
 public class AdvancedCameraThread implements Runnable {
 
-    public static int THRESHOLD = 110;
-    public static int BLUR_KERNEL_SIZE =  9;
+    public static int THRESHOLD = 109;
+    public static int BLUR_KERNEL_SIZE = 9;
 
     public static double ONE_HEIGHT = 10;
     public static double FOUR_HEIGHT = 25;
@@ -50,11 +50,13 @@ public class AdvancedCameraThread implements Runnable {
         this.camera = camera;
         kill = false;
         state = CAMERA_STATE.NULL;
-        rectHeight = 0; rectWidth = 0;
+        rectHeight = 0;
+        rectWidth = 0;
     }
 
     @Override
     public void run() {
+        //Must add isInterrupted() since it crashes when OpMode is force stopped.
         while (!kill && !Thread.currentThread().isInterrupted()) {
             if (active) {
                 if (state == CAMERA_STATE.INIT) {
@@ -110,8 +112,8 @@ public class AdvancedCameraThread implements Runnable {
     }
 
     /**
-     * A slightly more advanced Stage-Switching OpenCV pipeline that detects clusters of orange pixels
-     * and calculates their height.
+     * Advanced Stage-Switching OpenCV pipeline that detects clusters of orange pixels
+     * and calculates their height. It detects the stack anywhere in the frame.
      */
     public class RingPipeline extends OpenCvPipeline {
 
@@ -153,7 +155,7 @@ public class AdvancedCameraThread implements Runnable {
             Cb = splitMat.get(1);
             Core.bitwise_not(Cb, CbInv);
 
-            //Threshold the image to isolat orange
+            //Threshold the image to isolate orange
             Imgproc.threshold(CbInv, thresholdMat, THRESHOLD, 255, Imgproc.THRESH_BINARY_INV);
 
             //Find the biggest white contour and place a rectangle on it
@@ -176,12 +178,14 @@ public class AdvancedCameraThread implements Runnable {
             rectWidth = ring.width;
             Imgproc.rectangle(input, ring, scalar, 5);
 
-            for (MatOfPoint m: contoursList) {
+            //Stupid bug. Clearing the vector should release the mats. Causes a memory leak otherwise.
+            for (MatOfPoint m : contoursList) {
                 m.release();
             }
             contoursList.clear();
 
-            for (Mat m: splitMat) {
+            //Stupid bug. Clearing the vector should release the mats. Causes a memory leak otherwise.
+            for (Mat m : splitMat) {
                 m.release();
             }
             splitMat.clear();
@@ -189,5 +193,4 @@ public class AdvancedCameraThread implements Runnable {
             return input;
         }
     }
-
 }

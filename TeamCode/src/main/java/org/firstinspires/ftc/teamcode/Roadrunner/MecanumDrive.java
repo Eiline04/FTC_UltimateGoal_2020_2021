@@ -155,12 +155,10 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
             setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
         }
 
-        //  reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorEx.Direction.FORWARD);
         rightFront.setDirection(DcMotorEx.Direction.REVERSE);
         leftRear.setDirection(DcMotorEx.Direction.FORWARD);
         rightRear.setDirection(DcMotorEx.Direction.REVERSE);
-
 
         setLocalizer(new TrackingWheelLocalizer(hardwareMap));
     }
@@ -300,7 +298,6 @@ public class MecanumDrive extends com.acmerobotics.roadrunner.drive.MecanumDrive
                     mode = Mode.IDLE;
                     setDriveSignal(new DriveSignal());
                 }
-
                 break;
             }
         }

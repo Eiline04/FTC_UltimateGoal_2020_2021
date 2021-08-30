@@ -11,6 +11,11 @@ import org.openftc.revextensions2.ExpansionHubEx;
 import org.openftc.revextensions2.ExpansionHubMotor;
 import org.openftc.revextensions2.ExpansionHubServo;
 
+/**
+ * Class for declaring and instantiating all hardware on the robot.
+ * Additional methods for asynchronous Bulk Data polling
+ */
+
 public class Hardware {
     public ExpansionHubMotor frontLeftWheel = null;
     public ExpansionHubMotor frontRightWheel = null;
@@ -32,8 +37,8 @@ public class Hardware {
     public ExpansionHubEx expansionHub1;
     public ExpansionHubEx expansionHub2;
 
-    public CRServo mopStanga = null;
-    public CRServo mopDreapta = null;
+    public CRServo leftOmni = null;
+    public CRServo rightOmni = null;
 
     public ExpansionHubServo servoDAS = null;
 
@@ -42,11 +47,11 @@ public class Hardware {
     public void init(HardwareMap hwMap) {
         GlobalBulkRead.resetBulkData();
 
-        mopStanga = hwMap.get(CRServo.class,"mopStanga");
-        mopStanga.setDirection(CRServo.Direction.REVERSE);
+        leftOmni = hwMap.get(CRServo.class, "mopStanga");
+        leftOmni.setDirection(CRServo.Direction.REVERSE);
 
-        mopDreapta = hwMap.get(CRServo.class, "mopDreapta");
-        mopDreapta.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightOmni = hwMap.get(CRServo.class, "mopDreapta");
+        rightOmni.setDirection(DcMotorSimple.Direction.FORWARD);
 
         servoDAS = hwMap.get(ExpansionHubServo.class, "servoDAS");
         //-------------------------------
@@ -57,7 +62,7 @@ public class Hardware {
         //-----------------------------Wobble Mechanism------------------------------------------
         gripperServo = hwMap.get(ExpansionHubServo.class, "gripperServo");
         armServo = hwMap.get(ExpansionHubServo.class, "armServo");
-        wobbleRelease = hwMap.get(ExpansionHubServo.class,"wobbleRelease");
+        wobbleRelease = hwMap.get(ExpansionHubServo.class, "wobbleRelease");
 
         //-----------------------------Wheels------------------------------------------
         frontLeftWheel = hwMap.get(ExpansionHubMotor.class, "FL");
@@ -112,9 +117,13 @@ public class Hardware {
         launcherTop.setDirection(DcMotorEx.Direction.FORWARD);
         launcherBottom.setDirection(DcMotorEx.Direction.FORWARD);
 
+        //It must be reset in init() since static variables persist in-between matches
         GlobalBulkRead.resetBulkData();
     }
 
+    /**
+     * Enables bulk data. Significant decrease in iteration time (sampling period).
+     */
     public void enableBulkDataPolling() {
         GlobalBulkRead.resetBulkData();
         GlobalBulkRead.setExpansionHubs(expansionHub1, expansionHub2);

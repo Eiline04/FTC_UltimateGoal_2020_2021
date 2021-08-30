@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -56,7 +55,7 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         launcher.closeStopper();
         launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
-        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
+        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.leftOmni, robot.rightOmni);
 
         initWebcam();
         sleep(1000);
@@ -105,7 +104,7 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         drivetrain.followTrajectory(toShooting);
         sleep(300);
 
-        launcher.launchOneRing(); //power shots go brr
+        launcher.launchOneRing();
         sleep(launchSleepTime);
         dasPositions.setPositionDAS(0.82);
         sleep(500);
@@ -114,6 +113,7 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         dasPositions.setPositionDAS(0.78);
         sleep(500);
         launcher.launchOneRing();
+
 
         //-----------------ZERO---------------
         if (ringPosition == RingPosition.NONE) {
@@ -187,17 +187,19 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
             launcher.stop();
             dasPositions.startDAS();
 
+            sleep(3000);
+
             drivetrain.followTrajectory(toZoneC);
             Hardware.intakeRelease.setPosition(0.667);
             wobbleWrapper.wobbleRelease();
-            sleep(500);
+            sleep(200);
 
             drivetrain.followTrajectory(toBounceBackC);
             intake.startIntake();
             sleep(100);
             drivetrain.followTrajectory(collectC);
             launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
-            sleep(800);
+            sleep(100);
             intake.stopIntake();
             drivetrain.followTrajectory(toShooting2C);
 
@@ -208,15 +210,14 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
             launcher.launchOneRing();
             sleep(launchSleepTime);
             launcher.launchOneRing();
-            sleep(500);
-            launcher.stop();
+            sleep(300);
 
             drivetrain.followTrajectory(parkC);
         }
 
         wobbleWrapper.attachGrip();
         wobbleWrapper.closeArm();
-        sleep(300);
+        sleep(100);
     }
 
     void buildPathsZero() {
@@ -232,8 +233,8 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         toShooting2A = drivetrain.trajectoryBuilder(collectA.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(185.0))).build();
 
-        parkA = drivetrain.trajectoryBuilder(toShooting2A.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,10.0, Math.toRadians(180.0))).build();
+        parkA = drivetrain.trajectoryBuilder(toShooting2A.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneA, toBounceBackA, collectA, toShooting2A, parkA;
@@ -251,8 +252,8 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
         toShooting2B = drivetrain.trajectoryBuilder(collectB.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(185.0))).build();
 
-        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,10.0, Math.toRadians(180.0))).build();
+        parkB = drivetrain.trajectoryBuilder(toShooting2B.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneB, toBounceBackB, collectB, toShooting2B, parkB;
@@ -260,19 +261,19 @@ public class Auto_INTERIOR_BLUE extends LinearOpMode {
 
     void buildPathsFour() {
         toZoneC = drivetrain.trajectoryBuilder(toShooting.end(), false)
-                .lineToLinearHeading(new Pose2d(52.0, 50.0, Math.toRadians(180.0))).build();
+                .lineToLinearHeading(new Pose2d(52.0, 46.0, Math.toRadians(180.0))).build();
 
         toBounceBackC = drivetrain.trajectoryBuilder(toZoneC.end(), true)
-                .lineToLinearHeading(new Pose2d(55.0, 55.0, Math.toRadians(290.0))).build();
+                .lineToLinearHeading(new Pose2d(55.0, 43.0, Math.toRadians(290.0))).build();
 
         collectC = drivetrain.trajectoryBuilder(toBounceBackC.end(), false)
-                .lineToConstantHeading(new Vector2d(55.0, -2.0), setMaxVelocity(20.0), new ProfileAccelerationConstraint(20.0)).build();
+                .lineToConstantHeading(new Vector2d(55.0, -2.0), setMaxVelocity(35.0), new ProfileAccelerationConstraint(35.0)).build();
 
         toShooting2C = drivetrain.trajectoryBuilder(collectC.end(), true)
                 .lineToLinearHeading(new Pose2d(-12.0, 14.0, Math.toRadians(185.0))).build();
 
-        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(),true)
-                .lineToLinearHeading(new Pose2d(10.0,10.0, Math.toRadians(180.0))).build();
+        parkC = drivetrain.trajectoryBuilder(toShooting2C.end(), true)
+                .lineToLinearHeading(new Pose2d(10.0, 10.0, Math.toRadians(180.0))).build();
     }
 
     Trajectory toZoneC, toBounceBackC, collectC, toShooting2C, parkC;

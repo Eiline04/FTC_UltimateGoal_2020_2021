@@ -16,7 +16,7 @@ import java.util.concurrent.atomic.LongAccumulator;
 import static java.lang.Thread.sleep;
 
 /**
- *  Wrapper for the ring launcher
+ * Wrapper for the ring launcher and auxiliary mechanisms
  */
 
 @Config
@@ -29,7 +29,7 @@ public class LauncherWrapper {
     public static double TeleOpShootingVelocity = 600;
     public static double TeleOpPowerShotVelocity = 555;
 
-    public static final double shootingVelocity = 612 - 19.0;
+    public static final double shootingVelocity = 593;
 
     private double kP = 0;
     private double kI = 0;
@@ -46,21 +46,32 @@ public class LauncherWrapper {
         this.ringStopper = ringStopper;
     }
 
+    /**
+     * Get angular velocity in deg/sec. If available, read from the Bulk Data
+     *
+     * @return
+     */
     public float getAngularVelocity() {
-        if(BulkReadThread.kill) return (float) launcherTop.getVelocity(AngleUnit.DEGREES);
+        if (BulkReadThread.kill) return (float) launcherTop.getVelocity(AngleUnit.DEGREES);
 
         return GlobalBulkRead.bulkData1.getMotorVelocity(launcherTop);
     }
 
     public void setVelocity(double angVel, AngleUnit angleUnit) {
-        if(angVel == 0.0) { this.stop(); return; }
+        if (angVel == 0.0) {
+            this.stop();
+            return;
+        }
         isPoweredUp = true;
-        launcherTop.setVelocity(angVel,angleUnit);
-        launcherBottom.setVelocity(angVel,angleUnit);
+        launcherTop.setVelocity(angVel, angleUnit);
+        launcherBottom.setVelocity(angVel, angleUnit);
     }
 
     public void setPower(float power) {
-        if(power == 0.0) { this.stop(); return; }
+        if (power == 0.0) {
+            this.stop();
+            return;
+        }
         isPoweredUp = true;
         launcherTop.setPower(power);
         launcherBottom.setPower(power);
@@ -74,13 +85,16 @@ public class LauncherWrapper {
     }
 
     public void setPIDFCoeff(PIDFCoefficients newPid) {
-        kP = newPid.p; kI = newPid.i; kD = newPid.d; f = newPid.f;
-        launcherTop.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,newPid);
-        launcherBottom.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,newPid);
+        kP = newPid.p;
+        kI = newPid.i;
+        kD = newPid.d;
+        f = newPid.f;
+        launcherTop.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPid);
+        launcherBottom.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, newPid);
     }
 
     public PIDFCoefficients getPIDCoeff() {
-        return new PIDFCoefficients(kP,kI,kD,f);
+        return new PIDFCoefficients(kP, kI, kD, f);
     }
 
     public void setServoPosition(float position) {
@@ -102,9 +116,10 @@ public class LauncherWrapper {
     }
 
     public void launchOneRing() {
-        if(Thread.currentThread().isInterrupted()) return;
+        //The sleep() after this will cause a crash if the OpMode is force stopped. Safeguard is needed.
+        if (Thread.currentThread().isInterrupted()) return;
 
-        if(isClosed) {
+        if (isClosed) {
             openStopper();
         }
         setServoPosition(0.5f);

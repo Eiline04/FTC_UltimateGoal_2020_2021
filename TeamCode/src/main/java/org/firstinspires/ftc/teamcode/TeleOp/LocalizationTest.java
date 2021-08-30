@@ -12,6 +12,10 @@ import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
 
 import java.io.File;
 
+/**
+ * Simple OpMode to test the localization of the robot. It can also log coordinates
+ * to file if needed.
+ */
 @TeleOp(name = "Localization Test", group = "Misc")
 public class LocalizationTest extends LinearOpMode {
 
@@ -31,7 +35,7 @@ public class LocalizationTest extends LinearOpMode {
 
         Pose2d startPose = new Pose2d(-48.4, -63.0, Math.toRadians(180));
         drive.setPoseEstimate(startPose);
-        
+
         controller1 = new ControllerInput(gamepad1);
 
         stringBuilder = new StringBuilder();
@@ -47,13 +51,13 @@ public class LocalizationTest extends LinearOpMode {
 
             telemetry.addData("x", poseEstimate.getX());
             telemetry.addData("y", poseEstimate.getY());
-            telemetry.addData("heading", poseEstimate.getHeading());
+            telemetry.addData("heading", Math.toDegrees(poseEstimate.getHeading()));
             telemetry.update();
 
             stringBuilder.append(poseEstimate.getX()).append(" ").append(poseEstimate.getY()).append("\n");
         }
 
-        if(writeToFile) {
+        if (writeToFile) {
             ReadWriteFile.writeFile(coordinates, stringBuilder.toString());
         }
     }

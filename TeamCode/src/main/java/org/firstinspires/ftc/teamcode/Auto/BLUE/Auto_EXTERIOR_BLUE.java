@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstra
 import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationConstraint;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -56,7 +55,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
         launcher.closeStopper();
         launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
-        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
+        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.leftOmni, robot.rightOmni);
 
         initWebcam();
         sleep(1000);
@@ -175,15 +174,12 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
             launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
             launcher.openStopper();
 
-            //go forward, stop, go back and shoot, go forward to collect the rest
             drivetrain.followTrajectory(forwardC);
-            //launcher.setVelocity(LauncherWrapper.shootingVelocity, AngleUnit.DEGREES);
             sleep(100);
             drivetrain.followTrajectory(backwardC);
             intake.stopIntake();
             sleep(700);
 
-            //launch two rings
             launcher.launchOneRing();
             sleep(launchSleepTime);
             launcher.launchOneRing();
@@ -209,6 +205,7 @@ public class Auto_EXTERIOR_BLUE extends LinearOpMode {
 
         wobbleWrapper.closeArm();
         wobbleWrapper.attachGrip();
+        sleep(200);
     }
 
     void buildPathsZero() {

@@ -71,6 +71,7 @@ public class Encoder {
 
     /**
      * Allows you to set the direction of the counts and velocity without modifying the motor's direction state
+     *
      * @param direction either reverse or forward depending on if encoder counts should be negated
      */
     public void setDirection(Direction direction) {
@@ -90,10 +91,16 @@ public class Encoder {
         return currentPosition;
     }
 
+    /**
+     * Similar to getCurrentPosition(), except it polls straight from the Bulk Data
+     *
+     * @return current position of the encoder in ticks
+     */
     public int getCurrentPositionBulk() {
         int multiplier = getMultiplier();
 
-        if(BulkReadThread.kill) return getCurrentPosition(); //make sure that we don't use bulk reads if not available
+        //If thread is inactive it will cause an error. Just use normal method.
+        if (BulkReadThread.kill) return getCurrentPosition();
 
         int currentPosition = GlobalBulkRead.bulkData2.getMotorCurrentPosition(motor) * multiplier;
         if (currentPosition != lastPosition) {
@@ -111,8 +118,14 @@ public class Encoder {
         return motor.getVelocity() * multiplier;
     }
 
+    /**
+     * Similar to getRawVelocity(), except it polls straight from the Bulk Data
+     *
+     * @return current velocity of the encoder in ticks/sec
+     */
     public double getRawVelocityBulk() {
-        if(BulkReadThread.kill) return getRawVelocity(); //make sure that we don't use bulk reads if not available
+        //If thread is inactive it will cause an error. Just use normal method.
+        if (BulkReadThread.kill) return getRawVelocity();
 
         int multiplier = getMultiplier();
         return GlobalBulkRead.bulkData2.getMotorVelocity(motor) * multiplier;

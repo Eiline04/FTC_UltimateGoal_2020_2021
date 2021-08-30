@@ -3,11 +3,9 @@ package org.firstinspires.ftc.teamcode.Miscellaneous;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,7 +13,11 @@ import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 
-import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
+/**
+ * OpMode for tuning the flywheel PIDF values. Uses a separate thread to write
+ * continuously to telemetry. Best used with FTC Dashboard since you can plot the angular
+ * velocity in time and see the response.
+ */
 
 @Config
 @TeleOp
@@ -43,7 +45,7 @@ public class LauncherPIDFTuner extends LinearOpMode {
         robot = new Hardware();
         robot.init(hardwareMap);
         launcherWrapper = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
-        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
+        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.leftOmni, robot.rightOmni);
         controller = new ControllerInput(gamepad1);
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());

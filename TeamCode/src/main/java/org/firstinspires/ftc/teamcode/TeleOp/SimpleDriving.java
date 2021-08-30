@@ -6,10 +6,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.Hardware;
 import org.firstinspires.ftc.teamcode.Miscellaneous.ControllerInput;
 import org.firstinspires.ftc.teamcode.Roadrunner.MecanumDrive;
@@ -17,9 +15,6 @@ import org.firstinspires.ftc.teamcode.Wrappers.DasPositions;
 import org.firstinspires.ftc.teamcode.Wrappers.Intake;
 import org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper;
 import org.firstinspires.ftc.teamcode.Wrappers.WobbleWrapper;
-
-import java.io.File;
-import java.text.DecimalFormat;
 
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpPowerShotVelocity;
 import static org.firstinspires.ftc.teamcode.Wrappers.LauncherWrapper.TeleOpShootingVelocity;
@@ -62,6 +57,7 @@ public class SimpleDriving extends LinearOpMode {
 
         robot.enableBulkDataPolling();
 
+        //Timer to keep track of how long the launcher flap has been active for
         flapTimer = new ElapsedTime();
 
         waitForStart();
@@ -95,7 +91,7 @@ public class SimpleDriving extends LinearOpMode {
     void initSubsystems() {
         robot = new Hardware();
         robot.init(hardwareMap);
-        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.mopStanga, robot.mopDreapta);
+        intake = new Intake(robot.staticIntake, robot.mobileIntake, robot.leftOmni, robot.rightOmni);
         wobbleWrapper = new WobbleWrapper(robot.gripperServo, robot.armServo, robot.wobbleRelease);
         launcher = new LauncherWrapper(robot.launcherTop, robot.launcherBottom, robot.launchServo, robot.ringStopper);
         launcher.setPIDFCoeff(new PIDFCoefficients(55, 0, 0, 11.5));
@@ -124,11 +120,9 @@ public class SimpleDriving extends LinearOpMode {
         }
 
         if (intakeState && !prevIntakeState) {
-            //start the intake
             intake.startIntake();
         }
         if (!intakeState && prevIntakeState) {
-            //stop the intake
             intake.stopIntake();
         }
         prevIntakeState = intakeState;
@@ -149,7 +143,7 @@ public class SimpleDriving extends LinearOpMode {
             }
         }
         if (controller1.YOnce() && launcher.isPoweredUp) {
-            if(launcher.isClosed) {
+            if (launcher.isClosed) {
                 launcher.openStopper();
                 sleep(50);
             }
@@ -182,14 +176,14 @@ public class SimpleDriving extends LinearOpMode {
     }
 
     void handleLauncher() {
-
-        if(flapTimer.seconds() > 3.0 && !launcher.isClosed) {
+        //Close the flap after three seconds
+        if (flapTimer.seconds() > 3.0 && !launcher.isClosed) {
             launcher.closeStopper();
             flapTimer.reset();
         }
 
-        //temporary but apparently not
-        if(controller1.rightBumperOnce()) {
+        //Overrides the signal by manually changing the booleans
+        if (controller1.rightBumperOnce()) {
             launcherState = true;
             prevLauncherState = true;
             launcher.setVelocity(TeleOpPowerShotVelocity, AngleUnit.DEGREES);
@@ -200,17 +194,22 @@ public class SimpleDriving extends LinearOpMode {
             launcherState = !launcherState;
         }
 
+        //Rising edge of the signal to detect the starting of the launcher
         if (launcherState && !prevLauncherState) {
             launcher.setVelocity(TeleOpShootingVelocity, AngleUnit.DEGREES);
             Hardware.intakeRelease.setPosition(0.667);
         }
 
+        //Falling edge of the signal to detect the stopping of the launcher
         if (!launcherState && prevLauncherState) {
             launcher.stop();
         }
     }
 
-    //Ridiculously over-engineered. Accounts for misalignment of joysticks (if present) by using epsilon equality
+    /**
+     *     Ridiculously over-engineered. Accounts for misalignment of joysticks (if present) by using epsilon equality.
+     *     Heading adjustment is dynamically changed between joystick and bumpers based on what the driver presses.
+     */
     void handleDriving(MecanumDrive drivetrain) {
         leftStickY = -controller1.left_stick_y;
         if (Math.abs(leftStickY) < eps) leftStickY = 0;

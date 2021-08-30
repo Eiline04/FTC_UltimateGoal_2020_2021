@@ -53,11 +53,11 @@ public class MaxAccelerationTuner extends LinearOpMode {
             currentVel = drive.getPoseVelocity().getX();
             double deltaVelocity = currentVel - prevVel;
 
-            double acceleration = deltaVelocity/deltaTime;
+            double acceleration = deltaVelocity / deltaTime;
 
-            if(acceleration > maxAcc) maxAcc = acceleration;
+            if (acceleration > maxAcc) maxAcc = acceleration;
 
-            telemetry.addData("Acceleration",acceleration);
+            telemetry.addData("Acceleration", acceleration);
             telemetry.update();
 
             prevTime = currentTime;

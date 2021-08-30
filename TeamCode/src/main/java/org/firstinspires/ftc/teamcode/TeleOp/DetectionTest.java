@@ -10,6 +10,10 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import static org.firstinspires.ftc.teamcode.RingDetector.AdvancedCameraThread.RingPosition;
 
+/**
+ * Simple OpMode to check the webcam detection. Shows current and max FPS.
+ */
+
 @TeleOp(group = "Misc")
 public class DetectionTest extends LinearOpMode {
 
